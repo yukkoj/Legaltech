@@ -1,65 +1,203 @@
 # Legal Document Creator
 
-This project provides a framework for generating legal documents, specifically an Advanced Directive, through an interactive questionnaire and a multi-agent system.
+A web-based platform for generating legal documents through an intuitive user interface and backend document automation. Currently supporting Advanced Directives (Living Wills) with a clean, responsive form-based UI.
+
+## Architecture
+
+The system uses a **template-based JSON approach**:
+- **Frontend**: Web UI (HTML/CSS/JavaScript) for user input
+- **Backend**: Flask API that validates data and generates documents
+- **Documents**: Generated from Jinja2 templates using validated questionnaire data
+
+See [ARCHITECTURE.md](ARCHITECTURE.md) for detailed architecture documentation.
 
 ## Features
 
-*   **Interactive Questionnaire**: Guides the user through collecting necessary information for an Advanced Directive.
-*   **Input Validation**: An `InputEditorAgent` reviews the user's data for completeness, consistency, and legal validity before drafting.
-*   **Template-based Drafting**: A `DraftingAgent` uses Jinja2 templates to generate the final document from the validated user data.
-*   **State-Specific Guidance**: Provides specific options and rules, for example for California residents.
-*   **Regeneration**: Allows users to modify their saved questionnaire data and regenerate the document.
+✅ **Web-Based UI** - Modern, responsive form with multi-step questionnaire
+✅ **Real-Time Validation** - Input validation before document generation
+✅ **Template-Based Generation** - Documents created from Jinja2 templates
+✅ **JSON Data Storage** - Questionnaires saved as JSON for easy editing and regeneration
+✅ **Download Documents** - Export generated documents as text files
+✅ **State Selection** - Support for all US states with state-specific guidance
+✅ **Comprehensive Questionnaire** - Covers personal info, healthcare preferences, values, witnesses
 
-## How to Generate a Document
-
-The primary way to generate an Advanced Directive is by running the main orchestrator script, which provides an interactive command-line menu.
+## Quick Start
 
 ### Prerequisites
+- Python 3.7+
+- pip
 
-*   Python 3.x
-*   Required libraries. You can install them from the project root directory using pip:
-    ```bash
-    pip install -r requirements.txt
-    ```
+### Installation
 
-### Steps
+1. **Install dependencies:**
+   ```bash
+   pip install -r legal_doc_creator/requirements.txt
+   ```
 
-1.  **Navigate to the project directory:**
-    Open your terminal or command prompt and navigate to the `Legaltech` root directory.
+2. **Start the Flask server:**
+   ```bash
+   cd legal_doc_creator
+   python app.py
+   ```
 
-2.  **Run the Orchestrator:**
-    Execute the main orchestrator script from the project's root directory:
+3. **Open in browser:**
+   ```
+   http://localhost:5000
+   ```
 
-    ```bash
-    python legal_doc_creator/orchestrator.py
-    ```
+4. **Fill out the questionnaire** across 6 tabs:
+   - Personal Information
+   - Healthcare Agent
+   - Treatment Preferences
+   - Values & Beliefs
+   - Witnesses
+   - Review & Generate
 
-3.  **Follow the Interactive Menu:**
-    You will be presented with a menu:
+5. **Click "Generate Document"** to create your Advanced Directive
 
-    ```
-    ======================================================================
+6. **Download or copy** the generated document
+
+See [RUNNING_UI.md](RUNNING_UI.md) for detailed setup and troubleshooting.
+
+## Project Structure
+
+```
+legal_doc_creator/
+├── app.py                     ← Flask web server
+├── templates/
+│   └── index.html             ← Web form UI
+├── static/
+│   ├── css/style.css         ← Styling
+│   └── js/app.js             ← Frontend logic
+├── input_editor_agent.py      ← Data validation
+├── drafting_agent.py          ← Document generation
+├── template_system.py         ← Template management
+├── questionnaires.py          ← Data models
+├── orchestrator.py            ← Workflow coordination
+├── output/                    ← Generated documents
+└── requirements.txt
+```
+
+## API Endpoints
+
+| Method | Endpoint | Purpose |
+|--------|----------|---------|
+| GET | `/` | Serve main form UI |
+| POST | `/api/generate-document` | Validate & generate document |
+| POST | `/api/validate-questionnaire` | Validate questionnaire only |
+| GET | `/api/states` | Get list of US states |
+| GET | `/api/health` | Health check |
+
+## How It Works
+
+1. **User fills form** in web UI (6 tabs)
+2. **JavaScript collects** form data
+3. **Flask API receives** JSON questionnaire
+4. **InputEditorAgent validates** data (checks completeness, consistency, legal validity)
+5. **If valid**: questionnaire saved as JSON, DraftingAgent renders template
+6. **Document returned** to UI for download/copy
+7. **User edits** questionnaire JSON if needed, regenerates document
+
+## Generating Documents
+
+### Web UI (Recommended)
+```bash
+cd legal_doc_creator
+python app.py
+# Then open http://localhost:5000
+```
+
+### Command Line (Alternative)
+```bash
+cd legal_doc_creator
+python orchestrator.py
+# Follow interactive menu
+```
+
+### Programmatic (Python)
+```python
+from legal_doc_creator.orchestrator import DocumentOrchestrator
+
+orchestrator = DocumentOrchestrator()
+result = orchestrator.create_advanced_directive(interactive=False)
+# Pass questionnaire data directly
+```
+
+## Document Types Supported
+
+- **Advanced Directive** (Living Will) - Complete support
+  - Healthcare agent designation
+  - Life-sustaining treatment preferences
+  - Personal values and beliefs
+  - Organ donation
+  - Witness signatures
+
+## Validation Features
+
+The Input Editor Agent validates:
+- ✓ All required fields are present
+- ✓ Data is logically consistent
+- ✓ Text entries are reasonable length
+- ✓ Dates are in valid format
+- ✓ Legal requirements met (2 witnesses, etc.)
+- ✓ No conflicts (witnesses ≠ healthcare agent, etc.)
+
+## Customization
+
+### Add Form Fields
+Edit `templates/index.html`
+
+### Customize Document Template
+Edit `templates/advanced_directive.jinja2`
+
+### Change Styling
+Edit `static/css/style.css`
+
+### Modify Validation Rules
+Edit `input_editor_agent.py`
+
+### Add New Document Types
+1. Create new template in `templates/`
+2. Add new questionnaire class in `questionnaires.py`
+3. Add API endpoint in `app.py`
+
+## File Outputs
+
+Generated files are saved to `output/`:
+- `questionnaire_YYYYMMDD_HHMMSS.json` - User questionnaire data
+- `advanced_directive_draft.txt` - Generated document
+
+## Technologies
+
+- **Backend**: Flask (Python web framework)
+- **Templates**: Jinja2 (template engine)
+- **Frontend**: HTML5, CSS3, Vanilla JavaScript
+- **Data**: JSON for questionnaire storage
+- **Validation**: Custom Python validation agents
+
+## License
+
+See LICENSE file for details.
+
+## Support & Documentation
+
+- **Setup Guide**: See [RUNNING_UI.md](RUNNING_UI.md)
+- **Architecture**: See [ARCHITECTURE.md](ARCHITECTURE.md)
+- **Legal Disclaimer**: Consult with an attorney for legal advice
     LEGAL DOCUMENT CREATOR - ADVANCED DIRECTIVE
     ======================================================================
-
+    
     1. Create New Advanced Directive
     2. Regenerate from Existing Questionnaire
     3. Exit
-
+    
     Choose an option (1-3):
     ```
 
-4.  **Create a New Document:**
-    *   Enter `1` to start the questionnaire for a new Advanced Directive.
-    *   Answer the questions as prompted. The questionnaire will cover personal information, healthcare agents, treatment preferences, and more.
-
-5.  **Review and Generate:**
-    *   After you complete the questionnaire, the `InputEditorAgent` will automatically review your answers.
-    *   If all checks pass, the document will be generated. If there are issues, you will be notified.
-
-6.  **Find Your Document:**
-    *   The final document will be saved as a PDF file in the `output/` directory at the project root (e.g., `output/advanced_directive_draft.pdf`).
-    *   Your questionnaire responses will also be saved as a JSON file (`advanced_directive_questionnaire.json`) in the same `output/` directory.
+3.  **Complete the Questionnaire and Find Your Document:**
+    Answer the questions as prompted. After you finish, the system will automatically review your answers and generate the document.
+    *   **Document Location:** `output/advanced_directive_draft.pdf`
+    *   **Data File:** `output/advanced_directive_questionnaire.json`
 
 ### Regenerating a Document
 

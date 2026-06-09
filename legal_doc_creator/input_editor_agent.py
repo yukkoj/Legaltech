@@ -72,6 +72,26 @@ class InputEditorAgent:
             value = data.get(field, '').strip() if isinstance(data.get(field), str) else data.get(field)
             if not value:
                 self.feedback.append(f"❌ MISSING: {label} (required)")
+        
+        # Check signature method: Either notary OR 2 witnesses required
+        if document_type == 'advanced_directive':
+            witness_1 = data.get('witness_1_name', '').strip()
+            witness_2 = data.get('witness_2_name', '').strip()
+            notary_required = data.get('notary_required')
+            
+            has_witnesses = witness_1 and witness_2
+            has_notary = notary_required in [True, 'true']
+            
+            if not has_witnesses and not has_notary:
+                self.feedback.append(
+                    "❌ MISSING: Either 2 witnesses OR notarization is required. Please provide at least one."
+                )
+            elif has_witnesses and (not witness_1 or not witness_2):
+                # Partial witnesses provided
+                if witness_1 and not witness_2:
+                    self.feedback.append("❌ MISSING: Witness 2 name is required if providing witnesses.")
+                elif witness_2 and not witness_1:
+                    self.feedback.append("❌ MISSING: Witness 1 name is required if providing witnesses.")
 
         # Conditionally check for witnesses based on signature method
         if document_type == 'advanced_directive' and data.get('signature_method') == 'witnesses':
@@ -185,34 +205,31 @@ class InputEditorAgent:
             if dob:
                 logger.info(f"Age verification: User provided DOB {dob}")
             
-            # State-specific requirements
-            state = data.get('state_of_residence', '').lower()
-            witness_count = sum(1 for i in [1, 2] if data.get(f'witness_{i}_name', '').strip())
-            signature_method = data.get('signature_method')
-
-            if not signature_method:
-                self.feedback.append("❌ MISSING: A signature method (witnesses or notary) must be chosen.")
-                return  # Can't validate further without this
-
-            if signature_method == 'witnesses':
-                # Notary recommendation for interstate if not already chosen
-                if not data.get('notary_required'):
-                    self.suggestions.append(
-                        f"💡 For {state.capitalize() if state else 'your state'} - Consider also having the document notarized for better validity across states."
-                    )
+            # Check signature method: Either notary OR witnesses
+            witness_1 = data.get('witness_1_name', '').strip()
+            witness_2 = data.get('witness_2_name', '').strip()
+            notary_required = data.get('notary_required')
             
-            if signature_method == 'notary':
-                if not data.get('notary_required'):
-                    # This is an inconsistency, but we can suggest a fix or auto-fix.
-                    self.suggestions.append("💡 'Notary' was selected as the signature method; the document will be set up for notarization.")
-                    data['notary_required'] = True  # Auto-correct
-                if witness_count > 0:
-                    self.suggestions.append("💡 You chose to use a notary, but also provided witness information. The witness info will be ignored in the final document unless you also opted for witnesses.")
-
-            if state == 'california':
-                # California-specific checks can be added here if they are more detailed
-                # The witness restrictions are already checked in _check_consistency
-                pass
+            has_witnesses = witness_1 and witness_2
+            has_notary = notary_required in [True, 'true']
+            
+            state = data.get('state_of_residence', '').lower()
+            
+            # Provide suggestions based on signature method chosen
+            if has_witnesses and not has_notary:
+                self.suggestions.append(
+                    f"💡 For {state.capitalize() if state else 'your state'} - Consider also having the document notarized for better validity across states."
+                )
+            
+            if has_notary and not has_witnesses:
+                self.suggestions.append(
+                    f"💡 Notarization provides strong validity across all states including {state.capitalize() if state else 'your state'}."
+                )
+            
+            if has_witnesses and has_notary:
+                self.suggestions.append(
+                    "💡 Providing both witnesses and notarization provides excellent protection for document validity."
+                )
     
     def _is_valid_date_format(self, date_str: str) -> bool:
         """Check if date string is reasonable format"""

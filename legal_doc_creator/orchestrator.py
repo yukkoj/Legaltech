@@ -169,6 +169,50 @@ ARCHITECTURE NOTE:
 """)
         
         return result
+
+    def create_from_data(self, questionnaire_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Creates a document from a dictionary of questionnaire data.
+        Non-interactive version for web UI or programmatic use.
+        """
+        result = { 'status': None }
+
+        # STEP 1: VALIDATE & REVIEW INPUT
+        print("\n--- Reviewing data ---")
+        is_valid, review_result = self.input_editor_workflow.review_and_request_changes(
+            questionnaire_data,
+            document_type='advanced_directive'
+        )
+        result['validation_result'] = review_result
+        
+        if not is_valid:
+            result['status'] = 'review_required'
+            return result
+        
+        # STEP 2: SAVE QUESTIONNAIRE AS JSON
+        print("\n--- Saving data ---")
+        questionnaire_file = self.output_dir / "advanced_directive_questionnaire.json"
+        with open(questionnaire_file, 'w') as f:
+            json.dump(questionnaire_data, f, indent=2, default=str)
+        result['questionnaire_file'] = str(questionnaire_file)
+
+        # STEP 3: GENERATE DOCUMENT
+        print("\n--- Generating document ---")
+        generation_result = self.drafting_workflow.generate_from_questionnaire(
+            questionnaire_data,
+            document_type='advanced_directive',
+            save_to_file=True
+        )
+        
+        # Merge results
+        result.update(generation_result)
+        
+        if generation_result.get('status') == 'success':
+            result['status'] = 'success'
+        else:
+            result['status'] = 'generation_error'
+            
+        return result
     
     def reload_and_regenerate(self, questionnaire_file: str) -> Dict[str, Any]:
         """

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Directive Creator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Advanced Directive Creator</h1>
+            <p class="subtitle">Create your advance healthcare directive online</p>
+        </header>
+
+        <main>
+            <!-- Tabs Navigation -->
+            <div class="tabs">
+                <button class="tab-button active" data-tab="personal">Personal Info</button>
+                <button class="tab-button" data-tab="healthcare">Healthcare Agent</button>
+                <button class="tab-button" data-tab="treatment">Treatment Preferences</button>
+                <button class="tab-button" data-tab="values">Values & Beliefs</button>
+                <button class="tab-button" data-tab="witnesses">Witnesses</button>
+                <button class="tab-button" data-tab="review">Review & Generate</button>
+            </div>
+
+            <!-- Form Container -->
+            <form id="questionnaireForm" class="questionnaire-form">
+                
+                <!-- TAB 1: PERSONAL INFORMATION -->
+                <div class="tab-content active" id="personal">
+                    <h2>Personal Information</h2>
+                    
+                    <div class="form-group">
+                        <label for="fullName">Full Legal Name *</label>
+                        <input type="text" id="fullName" name="full_name" required placeholder="Your full legal name">
+                        <span class="field-hint">Must match your legal ID</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dateOfBirth">Date of Birth *</label>
+                        <input type="date" id="dateOfBirth" name="date_of_birth" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="stateOfResidence">State of Residence *</label>
+                        <select id="stateOfResidence" name="state_of_residence" required>
+                            <option value="">Select a state...</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- TAB 2: HEALTHCARE AGENT -->
+                <div class="tab-content" id="healthcare">
+                    <h2>Healthcare Agent (Proxy)</h2>
+                    <p class="section-info">Designate someone to make healthcare decisions on your behalf if you cannot communicate.</p>
+                    
+                    <div class="form-group">
+                        <label for="agentName">Healthcare Agent Full Name *</label>
+                        <input type="text" id="agentName" name="healthcare_agent_name" required placeholder="Full name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="agentRelationship">Relationship to You *</label>
+                        <input type="text" id="agentRelationship" name="healthcare_agent_relationship" required placeholder="e.g., Spouse, Child, Friend">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="agentPhone">Phone Number</label>
+                        <input type="tel" id="agentPhone" name="healthcare_agent_phone" placeholder="(555) 123-4567">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="agentEmail">Email Address</label>
+                        <input type="email" id="agentEmail" name="healthcare_agent_email" placeholder="email@example.com">
+                    </div>
+
+                    <hr class="divider">
+
+                    <h3>Alternate Healthcare Agent (Optional)</h3>
+                    <p class="section-info">If primary agent is unavailable</p>
+
+                    <div class="form-group">
+                        <label for="altAgentName">Alternate Agent Full Name</label>
+                        <input type="text" id="altAgentName" name="alternate_agent_name" placeholder="Full name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="altAgentRelationship">Relationship to You</label>
+                        <input type="text" id="altAgentRelationship" name="alternate_agent_relationship" placeholder="e.g., Sibling, Attorney">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="altAgentPhone">Phone Number</label>
+                        <input type="tel" id="altAgentPhone" name="alternate_agent_phone" placeholder="(555) 123-4567">
+                    </div>
+                </div>
+
+                <!-- TAB 3: TREATMENT PREFERENCES -->
+                <div class="tab-content" id="treatment">
+                    <h2>Life-Sustaining Treatment Preferences</h2>
+                    <p class="section-info">Indicate your wishes about the following treatments</p>
+
+                    <div class="treatment-group">
+                        <p class="treatment-question">In general, do you want cardiopulmonary resuscitation (CPR) if your heart stops?</p>
+                        <div class="radio-group">
+                            <label><input type="radio" name="want_cpr" value="yes"> Yes</label>
+                            <label><input type="radio" name="want_cpr" value="no"> No</label>
+                            <label><input type="radio" name="want_cpr" value="only_if_recovery"> Only if recovery is likely</label>
+                            <label><input type="radio" name="want_cpr" value="uncertain"> Uncertain</label>
+                        </div>
+                    </div>
+
+                    <div class="treatment-group">
+                        <p class="treatment-question">Do you want mechanical ventilation (breathing machine)?</p>
+                        <div class="radio-group">
+                            <label><input type="radio" name="want_mechanical_ventilation" value="yes"> Yes</label>
+                            <label><input type="radio" name="want_mechanical_ventilation" value="no"> No</label>
+                            <label><input type="radio" name="want_mechanical_ventilation" value="only_if_recovery"> Only if recovery is likely</label>
+                            <label><input type="radio" name="want_mechanical_ventilation" value="uncertain"> Uncertain</label>
+                        </div>
+                    </div>
+
+                    <div class="treatment-group">
+                        <p class="treatment-question">Do you want a feeding tube (artificial nutrition/hydration)?</p>
+                        <div class="radio-group">
+                            <label><input type="radio" name="want_feeding_tube" value="yes"> Yes</label>
+                            <label><input type="radio" name="want_feeding_tube" value="no"> No</label>
+                            <label><input type="radio" name="want_feeding_tube" value="only_if_recovery"> Only if recovery is likely</label>
+                            <label><input type="radio" name="want_feeding_tube" value="uncertain"> Uncertain</label>
+                        </div>
+                    </div>
+
+                    <div class="treatment-group">
+                        <p class="treatment-question">Do you want antibiotics for infections?</p>
+                        <div class="radio-group">
+                            <label><input type="radio" name="want_antibiotics" value="yes"> Yes</label>
+                            <label><input type="radio" name="want_antibiotics" value="no"> No</label>
+                            <label><input type="radio" name="want_antibiotics" value="only_if_recovery"> Only if recovery is likely</label>
+                            <label><input type="radio" name="want_antibiotics" value="uncertain"> Uncertain</label>
+                        </div>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <label>
+                            <input type="checkbox" name="pain_management_priority" value="true">
+                            Prioritize pain management and comfort, even if it might shorten life
+                        </label>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <label>
+                            <input type="checkbox" name="accept_medication_side_effects" value="true">
+                            Accept medications that may have side effects or hasten death if needed for comfort
+                        </label>
+                    </div>
+                </div>
+
+                <!-- TAB 4: VALUES & BELIEFS -->
+                <div class="tab-content" id="values">
+                    <h2>Personal Values & Beliefs</h2>
+                    <p class="section-info">Help healthcare providers understand what's important to you</p>
+
+                    <div class="form-group">
+                        <label for="personalValues">What matters most to you in life? *</label>
+                        <textarea id="personalValues" name="personal_values" required rows="4" placeholder="e.g., Family, independence, faith, creativity..."></textarea>
+                        <span class="field-hint">Be specific about what makes life meaningful to you</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="qualityOfLife">What would make life not worth living for you?</label>
+                        <textarea id="qualityOfLife" name="quality_of_life_definition" rows="4" placeholder="e.g., Permanent unconsciousness, severe dementia, loss of independence..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fears">What are your main fears or concerns about end-of-life care?</label>
+                        <textarea id="fears" name="fears_and_concerns" rows="3" placeholder="e.g., Being in pain, being a burden, dying alone..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="religiousAffiliation">Religious Affiliation (if any)</label>
+                        <input type="text" id="religiousAffiliation" name="religious_affiliation" placeholder="e.g., Catholic, Jewish, Muslim...">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="religiousInstructions">Religious or Spiritual Instructions</label>
+                        <textarea id="religiousInstructions" name="religious_instructions" rows="3" placeholder="e.g., Prayers, rituals, clergy involvement..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="culturalConsiderations">Cultural Considerations</label>
+                        <textarea id="culturalConsiderations" name="cultural_considerations" rows="3" placeholder="Cultural practices important to your care..."></textarea>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <label>
+                            <input type="checkbox" name="want_organ_donation" value="yes">
+                            I wish to donate organs
+                        </label>
+                    </div>
+
+                    <div id="organDonationTypes" class="conditional-group" style="display:none;">
+                        <p>Which organs would you like to donate?</p>
+                        <label><input type="checkbox" name="organ_types" value="heart"> Heart</label>
+                        <label><input type="checkbox" name="organ_types" value="lungs"> Lungs</label>
+                        <label><input type="checkbox" name="organ_types" value="liver"> Liver</label>
+                        <label><input type="checkbox" name="organ_types" value="kidneys"> Kidneys</label>
+                        <label><input type="checkbox" name="organ_types" value="pancreas"> Pancreas</label>
+                        <label><input type="checkbox" name="organ_types" value="all"> All organs</label>
+                    </div>
+                </div>
+
+<!-- TAB 5: WITNESSES & NOTARIZATION -->
+                <div class="tab-content" id="witnesses">
+                    <h2>Witnesses & Notarization</h2>
+                    <p class="section-info">You need EITHER 2 witnesses OR notarization (or both). Witnesses cannot be your healthcare agent, related to you, or your healthcare provider.</p>
+                    
+                    <h3>Option 1: Add Witnesses</h3>
+                    <p class="section-info">Leave blank if you prefer notarization only</p>
+                    
+                    <div class="form-group">
+                        <label for="witness1Name">Witness 1 Full Name</label>
+                        <input type="text" id="witness1Name" name="witness_1_name" placeholder="Full name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="witness1Phone">Witness 1 Phone Number</label>
+                        <input type="tel" id="witness1Phone" name="witness_1_phone" placeholder="(555) 123-4567">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="witness2Name">Witness 2 Full Name</label>
+                        <input type="text" id="witness2Name" name="witness_2_name" placeholder="Full name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="witness2Phone">Witness 2 Phone Number</label>
+                        <input type="tel" id="witness2Phone" name="witness_2_phone" placeholder="(555) 123-4567">
+                    </div>
+
+                    <hr class="divider">
+                    
+                    <h3>Option 2: Use Notarization</h3>
+                    <p class="section-info">Notarization can replace witnesses and is recommended for interstate validity</p>
+                    
+                    <div class="checkbox-group">
+                        <label>
+                            <input type="checkbox" id="notaryCheckbox" name="notary_required" value="true">
+                            I want this document notarized
+                        </label>
+                    </div>
+                </div>
+
+                <!-- TAB 6: REVIEW & GENERATE -->
+                <div class="tab-content" id="review">
+                    <h2>Review & Generate</h2>
+                    <p class="section-info">Verify your information and generate your Advanced Directive document</p>
+
+                    <div id="validationResults"></div>
+
+                    <div class="form-actions">
+                        <button type="button" id="validateBtn" class="btn btn-secondary">
+                            Validate Input
+                        </button>
+                        <button type="button" id="generateBtn" class="btn btn-primary" disabled>
+                            Generate Document
+                        </button>
+                    </div>
+
+                    <div id="generationResults" style="display:none;">
+                        <div id="resultMessage" class="result-message"></div>
+                        
+                        <div id="documentPreview" style="display:none;">
+                            <h3>Document Preview</h3>
+                            <div id="documentContent" class="document-preview"></div>
+                            <div class="download-actions">
+                                <button type="button" id="downloadDocBtn" class="btn btn-primary">
+                                    Download Document (TXT)
+                                </button>
+                                <button type="button" id="copyDocBtn" class="btn btn-secondary">
+                                    Copy to Clipboard
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Navigation Buttons -->
+            <div class="form-navigation">
+                <button type="button" id="prevBtn" class="btn btn-secondary" style="display:none;">
+                    Previous
+                </button>
+                <button type="button" id="nextBtn" class="btn btn-primary">
+                    Next
+                </button>
+                <button type="button" id="resetBtn" class="btn btn-outline">
+                    Reset Form
+                </button>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 Legal Document Creator. Consult with an attorney for legal advice.</p>
+        </footer>
+    </div>
+
+    <!-- Loading Modal -->
+    <div id="loadingModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <div class="spinner"></div>
+            <p id="loadingText">Processing...</p>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
