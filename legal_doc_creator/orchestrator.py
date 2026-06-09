@@ -43,7 +43,7 @@ class DocumentOrchestrator:
         """Initialize orchestrator with sub-workflows"""
         self.input_editor_workflow = InputEditorWorkflow()
         self.drafting_workflow = RefinedDraftingWorkflow()
-        self.output_dir = Path("legal_doc_creator/output")
+        self.output_dir = Path("output")
         self.output_dir.mkdir(parents=True, exist_ok=True)
     
     def create_advanced_directive(self, interactive: bool = True) -> Dict[str, Any]:

@@ -141,7 +141,7 @@ DraftingAgent.generate_advanced_directive(questionnaire_data)
     ↓
 Returns: Formatted document text
     ↓
-Save to: advanced_directive_draft.txt
+Save to: output/advanced_directive_draft.pdf
 ```
 
 ### Step 5: READY FOR USER REVIEW
@@ -401,7 +401,7 @@ STATE_REQUIREMENTS = {
    - HTML for web viewing
 
 5. **Validation Enhancement**
-   - OpenAI API to validate legal language quality
+   - Gemini API to validate legal language quality
    - Compliance checking against state laws
 
 6. **Data Import/Export**

@@ -50,7 +50,7 @@ class TemplateManager:
 class JSONDataManager:
     """Manages questionnaire data as JSON"""
     
-    def __init__(self, output_dir: str = "legal_doc_creator/output"):
+    def __init__(self, output_dir: str = "output"):
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
     

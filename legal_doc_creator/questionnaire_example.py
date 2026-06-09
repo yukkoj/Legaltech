@@ -3,7 +3,10 @@ Example usage of the Advanced Directive questionnaire
 Shows how to integrate the questionnaire into the document creation workflow
 """
 
-from legal_doc_creator.questionnaires import AdvancedDirectiveQuestionnaireFlow
+try:
+    from legal_doc_creator.questionnaires import AdvancedDirectiveQuestionnaireFlow, get_questionnaire
+except ImportError:
+    from questionnaires import AdvancedDirectiveQuestionnaireFlow, get_questionnaire
 import json
 
 
@@ -30,8 +33,6 @@ def example_with_orchestrator():
     """
     Example: How to integrate questionnaire into orchestrator workflow
     """
-    # This is how you would use it in orchestrator.py
-    from legal_doc_creator.questionnaires import get_questionnaire
     
     document_type = "advanced_directive"
     
@@ -62,7 +63,7 @@ if __name__ == "__main__":
     
     # Optional: Save responses to file
     import json
-    with open("legal_doc_creator/output/questionnaire_responses.json", "w") as f:
+    with open("output/questionnaire_responses.json", "w") as f:
         json.dump(responses.to_dict(), f, indent=2, default=str)
     
-    print("\nResponses saved to: legal_doc_creator/output/questionnaire_responses.json")
+    print("\nResponses saved to: output/questionnaire_responses.json")

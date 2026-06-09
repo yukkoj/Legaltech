@@ -282,22 +282,30 @@ class AdvancedDirectiveQuestionnaireFlow:
         
         if self._ask_yes_no("Do you wish to donate organs?"):
             self.responses.want_organ_donation = "yes"
-            print("\nWhich organs would you like to donate? (Select all that apply)")
+            print("\nWhich organs would you like to donate?")
             organs = []
-            for organ in ["Heart", "Lungs", "Liver", "Kidneys", "Pancreas", "Corneas", "All"]:
-                if self._ask_yes_no(f"  {organ}?"):
-                    organs.append(organ.lower())
+            if self._ask_yes_no("  Donate all organs for transplant?"):
+                organs.append("all")
+            else:
+                print("\nPlease select which specific organs you wish to donate:")
+                for organ in ["Heart", "Lungs", "Liver", "Kidneys", "Pancreas", "Corneas"]:
+                    if self._ask_yes_no(f"  {organ}?"):
+                        organs.append(organ.lower())
             self.responses.organ_donation_types = organs
         else:
             self.responses.want_organ_donation = "no"
         
-        if self._ask_yes_no("Do you wish to donate tissue (skin, bone, corneas)?"):
+        if self._ask_yes_no("\nDo you wish to donate tissue (skin, bone, etc.)?"):
             self.responses.want_tissue_donation = "yes"
-            print("\nWhich tissues would you like to donate? (Select all that apply)")
+            print("\nWhich tissues would you like to donate?")
             tissues = []
-            for tissue in ["Skin", "Bone", "Corneas", "Heart Valves", "All"]:
-                if self._ask_yes_no(f"  {tissue}?"):
-                    tissues.append(tissue.lower())
+            if self._ask_yes_no("  Donate all tissues for transplant?"):
+                tissues.append("all")
+            else:
+                print("\nPlease select which specific tissues you wish to donate:")
+                for tissue in ["Skin", "Bone", "Corneas", "Heart Valves"]:
+                    if self._ask_yes_no(f"  {tissue}?"):
+                        tissues.append(tissue.lower())
             self.responses.tissue_donation_types = tissues
         else:
             self.responses.want_tissue_donation = "no"

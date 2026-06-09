@@ -5,7 +5,10 @@ Focus: Technical rendering, not content creation
 """
 
 from typing import Dict, Any, Optional
-from legal_doc_creator.template_system import TemplateManager, DraftingWorkflow
+try:
+    from legal_doc_creator.template_system import TemplateManager, DraftingWorkflow
+except ImportError:
+    from template_system import TemplateManager, DraftingWorkflow
 import logging
 
 logger = logging.getLogger(__name__)
@@ -120,7 +123,7 @@ class DraftingAgent:
         """
         from pathlib import Path
         
-        output_dir = Path('legal_doc_creator/output')
+        output_dir = Path('output')
         output_dir.mkdir(parents=True, exist_ok=True)
         
         if output_format == 'txt':

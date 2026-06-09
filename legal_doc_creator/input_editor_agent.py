@@ -65,8 +65,6 @@ class InputEditorAgent:
                 ('state_of_residence', 'State of residence'),
                 ('healthcare_agent_name', 'Healthcare agent name'),
                 ('healthcare_agent_relationship', 'Healthcare agent relationship'),
-                ('witness_1_name', 'First witness name'),
-                ('witness_2_name', 'Second witness name'),
             ]
         }
         
@@ -74,7 +72,14 @@ class InputEditorAgent:
             value = data.get(field, '').strip() if isinstance(data.get(field), str) else data.get(field)
             if not value:
                 self.feedback.append(f"❌ MISSING: {label} (required)")
-    
+
+        # Conditionally check for witnesses based on signature method
+        if document_type == 'advanced_directive' and data.get('signature_method') == 'witnesses':
+            if not data.get('witness_1_name', '').strip():
+                self.feedback.append("❌ MISSING: First witness name is required when using witnesses.")
+            if not data.get('witness_2_name', '').strip():
+                self.feedback.append("❌ MISSING: Second witness name is required when using witnesses.")
+
     def _check_consistency(self, data: Dict[str, Any]):
         """Check for logical consistency in responses"""
         
@@ -190,10 +195,6 @@ class InputEditorAgent:
                 return  # Can't validate further without this
 
             if signature_method == 'witnesses':
-                if witness_count < 2:
-                    self.feedback.append(
-                        f"❌ The chosen signature method requires 2 witnesses, but only {witness_count} were provided."
-                    )
                 # Notary recommendation for interstate if not already chosen
                 if not data.get('notary_required'):
                     self.suggestions.append(

@@ -17,9 +17,9 @@ The primary way to generate an Advanced Directive is by running the main orchest
 ### Prerequisites
 
 *   Python 3.x
-*   Required libraries. You can install them using pip:
+*   Required libraries. You can install them from the project root directory using pip:
     ```bash
-    pip install Jinja2 reportlab
+    pip install -r requirements.txt
     ```
 
 ### Steps
@@ -58,8 +58,8 @@ The primary way to generate an Advanced Directive is by running the main orchest
     *   If all checks pass, the document will be generated. If there are issues, you will be notified.
 
 6.  **Find Your Document:**
-    *   The final document will be saved as a PDF file in the `legal_doc_creator/output/` directory (e.g., `advanced_directive_draft.pdf`).
-    *   Your questionnaire responses will also be saved as a JSON file (`advanced_directive_questionnaire.json`) in the same directory.
+    *   The final document will be saved as a PDF file in the `output/` directory at the project root (e.g., `output/advanced_directive_draft.pdf`).
+    *   Your questionnaire responses will also be saved as a JSON file (`advanced_directive_questionnaire.json`) in the same `output/` directory.
 
 ### Regenerating a Document
 
@@ -67,5 +67,5 @@ If you want to make changes, you can edit the saved JSON file and regenerate the
 
 1.  Run the orchestrator again: `python legal_doc_creator/orchestrator.py`
 2.  Choose option `2` (Regenerate from Existing Questionnaire).
-3.  When prompted, provide the path to your JSON file (e.g., `legal_doc_creator/output/advanced_directive_questionnaire.json`).
+3.  When prompted, provide the path to your JSON file (e.g., `output/advanced_directive_questionnaire.json`).
 4.  The system will re-validate the data and generate a new document with your changes.
