@@ -43,7 +43,6 @@ class InputEditorAgent:
         self._check_consistency(refined_data)
         self._check_clarity(refined_data)
         self._check_legal_validity(refined_data, document_type)
-        self._check_optional_provisions(refined_data)
         
         is_ready = len(self.feedback) == 0  # Only issues block drafting, suggestions don't
         
@@ -214,27 +213,6 @@ class InputEditorAgent:
                 # The witness restrictions are already checked in _check_consistency
                 pass
     
-    def _check_optional_provisions(self, data: Dict[str, Any]):
-        """Identifies optional sections that are empty and informs the user they will be omitted."""
-        optional_provisions = {
-            'personal_values': 'Personal Values section',
-            'quality_of_life_definition': 'Quality of Life definition',
-            'fears_and_concerns': 'Fears and Concerns section',
-            'religious_instructions': 'Religious Instructions section',
-            'cultural_considerations': 'Cultural Considerations section',
-            'other_instructions': 'Other Instructions section',
-            'specific_wishes_body': 'Specific wishes for body disposition',
-            'mental_health_instructions': 'Mental Health Instructions section',
-        }
-
-        for field, label in optional_provisions.items():
-            value = data.get(field)
-            # Check if the value is None or an empty string
-            if not value or (isinstance(value, str) and not value.strip()):
-                self.suggestions.append(
-                    f"💡 The '{label}' is empty and will be omitted from the final document. This is an optional section."
-                )
-
     def _is_valid_date_format(self, date_str: str) -> bool:
         """Check if date string is reasonable format"""
         # Simple check for MM/DD/YYYY or similar

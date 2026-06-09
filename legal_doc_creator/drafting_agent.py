@@ -129,8 +129,21 @@ class DraftingAgent:
         elif output_format == 'md':
             filepath = output_dir / f"{filename}.md"
             filepath.write_text(document_text)
+        elif output_format == 'pdf':
+            from reportlab.platypus import SimpleDocTemplate, Paragraph
+            from reportlab.lib.styles import getSampleStyleSheet
+            from reportlab.lib.units import inch
+
+            filepath = output_dir / f"{filename}.pdf"
+            doc = SimpleDocTemplate(str(filepath), rightMargin=inch, leftMargin=inch, topMargin=inch, bottomMargin=inch)
+            styles = getSampleStyleSheet()
+            story = []
+            for line in document_text.split('\n'):
+                # Use a non-breaking space for empty lines to preserve spacing
+                p = Paragraph(line if line.strip() else '&nbsp;', styles['Normal'])
+                story.append(p)
+            doc.build(story)
         else:
-            # For docx/pdf, would need additional libraries
             raise NotImplementedError(f"Format '{output_format}' not yet supported")
         
         logger.info(f"Document saved: {filepath}")
@@ -178,7 +191,7 @@ class RefinedDraftingWorkflow:
                 filepath = self.drafting_agent.save_document(
                     result['document'],
                     f"{document_type}_draft",
-                    output_format='txt'
+                    output_format='pdf'
                 )
                 result['file_path'] = filepath
                 messages.append(f"✅ Saved to: {filepath}")
