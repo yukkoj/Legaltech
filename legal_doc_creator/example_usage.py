@@ -96,7 +96,7 @@ if __name__ == "__main__":
     # example_employment_contract()
     
     print("\nTo use this framework:")
-    print("1. Set your GEMINI_API_KEY in .env file")
+    print("1. Set your OPENAI_API_KEY in .env file")
     print("2. Create a LegalDocument with your requirements")
     print("3. Initialize DocumentOrchestrator")
     print("4. Call orchestrator.create_document()")

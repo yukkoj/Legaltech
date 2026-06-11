@@ -13,6 +13,12 @@
             <p class="subtitle">Create your advance healthcare directive online</p>
         </header>
 
+        <div class="load-container" style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #eee; text-align: center;">
+            <p class="section-info" style="margin-bottom: 10px;">Have a saved questionnaire? Load it here to continue.</p>
+            <button type="button" id="loadJsonBtn" class="btn btn-secondary">Load Questionnaire (JSON)</button>
+            <input type="file" id="jsonFileInput" accept=".json" style="display: none;">
+        </div>
+
         <main>
             <!-- Tabs Navigation -->
             <div class="tabs">
@@ -93,6 +99,36 @@
                     <div class="form-group">
                         <label for="altAgentPhone">Phone Number</label>
                         <input type="tel" id="altAgentPhone" name="alternate_agent_phone" placeholder="(555) 123-4567">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="altAgentEmail">Email Address</label>
+                        <input type="email" id="altAgentEmail" name="alternate_agent_email" placeholder="email@example.com">
+                    </div>
+
+                    <hr class="divider">
+
+                    <h3>Second Alternate Healthcare Agent (Optional)</h3>
+                    <p class="section-info">If primary and first alternate agents are unavailable</p>
+
+                    <div class="form-group">
+                        <label for="altAgent2Name">Second Alternate Agent Full Name</label>
+                        <input type="text" id="altAgent2Name" name="alternate_agent_2_name" placeholder="Full name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="altAgent2Relationship">Relationship to You</label>
+                        <input type="text" id="altAgent2Relationship" name="alternate_agent_2_relationship" placeholder="e.g., Sibling, Attorney">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="altAgent2Phone">Phone Number</label>
+                        <input type="tel" id="altAgent2Phone" name="alternate_agent_2_phone" placeholder="(555) 123-4567">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="altAgent2Email">Email Address</label>
+                        <input type="email" id="altAgent2Email" name="alternate_agent_2_email" placeholder="email@example.com">
                     </div>
                 </div>
 
@@ -210,45 +246,47 @@
                     </div>
                 </div>
 
-<!-- TAB 5: WITNESSES & NOTARIZATION -->
+                <!-- TAB 5: NOTARIZATION & WITNESSES -->
                 <div class="tab-content" id="witnesses">
-                    <h2>Witnesses & Notarization</h2>
-                    <p class="section-info">You need EITHER 2 witnesses OR notarization (or both). Witnesses cannot be your healthcare agent, related to you, or your healthcare provider.</p>
-                    
-                    <h3>Option 1: Add Witnesses</h3>
-                    <p class="section-info">Leave blank if you prefer notarization only</p>
-                    
-                    <div class="form-group">
-                        <label for="witness1Name">Witness 1 Full Name</label>
-                        <input type="text" id="witness1Name" name="witness_1_name" placeholder="Full name">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="witness1Phone">Witness 1 Phone Number</label>
-                        <input type="tel" id="witness1Phone" name="witness_1_phone" placeholder="(555) 123-4567">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="witness2Name">Witness 2 Full Name</label>
-                        <input type="text" id="witness2Name" name="witness_2_name" placeholder="Full name">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="witness2Phone">Witness 2 Phone Number</label>
-                        <input type="tel" id="witness2Phone" name="witness_2_phone" placeholder="(555) 123-4567">
-                    </div>
-
-                    <hr class="divider">
-                    
-                    <h3>Option 2: Use Notarization</h3>
-                    <p class="section-info">Notarization can replace witnesses and is recommended for interstate validity</p>
+                    <h2>Notarization & Witnesses</h2>
+                    <p class="section-info">Your document must be made legally valid. This is usually done with two witnesses or a notary public. Witnesses cannot be your healthcare agent, related to you, or your healthcare provider.</p>
                     
                     <div class="checkbox-group">
                         <label>
                             <input type="checkbox" id="notaryCheckbox" name="notary_required" value="true">
-                            I want this document notarized
+                            I want this document notarized. (Recommended for interstate validity)
                         </label>
                     </div>
+
+                    <div class="checkbox-group">
+                        <label>
+                            <input type="checkbox" id="useWitnessesCheckbox" name="use_witnesses" value="true">
+                            I want to use two witnesses.
+                        </label>
+                    </div>
+
+                    <div id="witnessesContainer" style="display:none;">
+                        <h3>Witnesses</h3>
+                        <p class="section-info">Please provide information for two witnesses.</p>
+                        <div class="form-group">
+                            <label for="witness1Name">Witness 1 Full Name</label>
+                            <input type="text" id="witness1Name" name="witness_1_name" placeholder="Full name">
+                        </div>
+                        <div class="form-group">
+                            <label for="witness1Phone">Witness 1 Phone Number</label>
+                            <input type="tel" id="witness1Phone" name="witness_1_phone" placeholder="(555) 123-4567">
+                        </div>
+                        <div class="form-group">
+                            <label for="witness2Name">Witness 2 Full Name</label>
+                            <input type="text" id="witness2Name" name="witness_2_name" placeholder="Full name">
+                        </div>
+                        <div class="form-group">
+                            <label for="witness2Phone">Witness 2 Phone Number</label>
+                            <input type="tel" id="witness2Phone" name="witness_2_phone" placeholder="(555) 123-4567">
+                        </div>
+                    </div>
+
+                    <hr class="divider">
                 </div>
 
                 <!-- TAB 6: REVIEW & GENERATE -->
@@ -276,6 +314,9 @@
                             <div class="download-actions">
                                 <button type="button" id="downloadDocBtn" class="btn btn-primary">
                                     Download Document (TXT)
+                                </button>
+                                <button type="button" id="downloadPdfBtn" class="btn btn-primary">
+                                    Download as PDF
                                 </button>
                                 <button type="button" id="copyDocBtn" class="btn btn-secondary">
                                     Copy to Clipboard

@@ -1,304 +1,114 @@
-"""
-UPDATED ORCHESTRATOR - Complete workflow coordination
-Manages the full pipeline: Questionnaire → Input Review → Draft → Ready to Edit
-
-Architecture (NEW):
-1. COLLECT: User fills questionnaire via AdvancedDirectiveQuestionnaireFlow
-2. REVIEW: InputEditorAgent validates & suggests improvements on USER DATA
-3. REFINE: Save questionnaire as JSON
-4. DRAFT: DraftingAgent renders template with JSON data
-5. OUTPUT: Document ready for user editing (user revises INPUT, not the generated document)
-
-Key Change:
-- Editor now focuses on INPUT QUALITY, not document polishing
-- Document is generated from template + valid JSON
-- Separation of concerns: Input validation vs. Document generation
-"""
-
-import json
-from typing import Dict, Any, Tuple, Optional
-from pathlib import Path
-
-try:
-    from legal_doc_creator.questionnaires import AdvancedDirectiveQuestionnaireFlow, get_questionnaire
-    from legal_doc_creator.input_editor_agent import InputEditorWorkflow
-    from legal_doc_creator.drafting_agent import RefinedDraftingWorkflow, print_document_summary
-except ImportError:
-    # Fallback for relative imports
-    from questionnaires import AdvancedDirectiveQuestionnaireFlow, get_questionnaire
-    from input_editor_agent import InputEditorWorkflow
-    from drafting_agent import RefinedDraftingWorkflow, print_document_summary
+"""Document processing orchestrator that coordinates between agents."""
+import os
+from typing import Optional
+from agents.drafting_agent import DraftingAgent
+from agents.editing_agent import EditingAgent
+from models.document import LegalDocument
 
 
 class DocumentOrchestrator:
-    """
-    Main orchestrator that manages the complete document generation pipeline.
+    """Orchestrates the multi-agent legal document creation process."""
     
-    New Workflow (Updated):
-    - Questionnaire Collection → Input Validation → Document Generation
-    - Separation: Input Editor validates DATA, Drafting Agent renders TEMPLATE
-    """
-    
-    def __init__(self):
-        """Initialize orchestrator with sub-workflows"""
-        self.input_editor_workflow = InputEditorWorkflow()
-        self.drafting_workflow = RefinedDraftingWorkflow()
-        self.output_dir = Path("output")
-        self.output_dir.mkdir(parents=True, exist_ok=True)
-    
-    def create_advanced_directive(self, interactive: bool = True) -> Dict[str, Any]:
+    def __init__(
+        self,
+        api_key: Optional[str] = None,
+        draft_model: str = "gpt-4",
+        edit_model: str = "gpt-4",
+        draft_temp: float = 0.7,
+        edit_temp: float = 0.5,
+        num_edit_passes: int = 1
+    ):
         """
-        Complete workflow to create an Advanced Directive
-        
-        Pipeline:
-        1. Collect questionnaire responses (interactive)
-        2. Validate input data quality
-        3. Save questionnaire as JSON
-        4. Generate document from template + JSON
-        5. Return ready-to-use document
+        Initialize the orchestrator.
         
         Args:
-            interactive: If True, collects user input via questionnaire
-                        If False, expects questionnaire data elsewhere
-        
-        Returns:
-            {
-                'status': 'success' | 'review_required' | 'generation_error',
-                'questionnaire_data': collected data dict,
-                'validation_result': input validation results,
-                'document': generated document text,
-                'document_file': path to saved document,
-                'questionnaire_file': path to saved questionnaire JSON
-            }
+            api_key: OpenAI API key (if None, reads from OPENAI_API_KEY env var)
+            draft_model: Model to use for drafting
+            edit_model: Model to use for editing
+            draft_temp: Temperature for draft agent
+            edit_temp: Temperature for edit agent
+            num_edit_passes: Number of editing passes to perform
         """
+        if api_key is None:
+            api_key = os.getenv("OPENAI_API_KEY")
         
-        result = {
-            'status': None,
-            'questionnaire_data': None,
-            'validation_result': None,
-            'document': None,
-            'document_file': None,
-            'questionnaire_file': None,
-        }
+        if not api_key:
+            raise ValueError("OPENAI_API_KEY not provided and not found in environment")
         
-        # STEP 1: COLLECT - Get questionnaire responses
-        print("\n" + "="*70)
-        print("STEP 1: QUESTIONNAIRE COLLECTION")
-        print("="*70)
-        
-        if interactive:
-            flow = AdvancedDirectiveQuestionnaireFlow()
-            questionnaire_responses = flow.run_interactive()
-            questionnaire_data = questionnaire_responses.to_dict()
-        else:
-            questionnaire_data = {}
-        
-        result['questionnaire_data'] = questionnaire_data
-        
-        # STEP 2: VALIDATE & REVIEW INPUT
-        print("\n" + "="*70)
-        print("STEP 2: INPUT REVIEW & VALIDATION")
-        print("="*70)
-        
-        is_valid, review_result = self.input_editor_workflow.review_and_request_changes(
-            questionnaire_data,
-            document_type='advanced_directive'
-        )
-        
-        result['validation_result'] = review_result
-        
-        if not is_valid:
-            result['status'] = 'review_required'
-            print("\n❌ Please address the issues above and try again.")
-            return result
-        
-        # STEP 3: SAVE QUESTIONNAIRE AS JSON
-        print("\n" + "="*70)
-        print("STEP 3: SAVING DATA")
-        print("="*70)
-        
-        questionnaire_file = self.output_dir / "advanced_directive_questionnaire.json"
-        with open(questionnaire_file, 'w') as f:
-            json.dump(questionnaire_data, f, indent=2, default=str)
-        print(f"✅ Questionnaire saved: {questionnaire_file}")
-        result['questionnaire_file'] = str(questionnaire_file)
-        
-        # STEP 4: GENERATE DOCUMENT
-        print("\n" + "="*70)
-        print("STEP 4: GENERATING DOCUMENT FROM TEMPLATE")
-        print("="*70)
-        
-        generation_result = self.drafting_workflow.generate_from_questionnaire(
-            questionnaire_data,
-            document_type='advanced_directive',
-            save_to_file=True
-        )
-        
-        if generation_result.get('status') != 'success':
-            result['status'] = 'generation_error'
-            return result
-        
-        result['document'] = generation_result.get('document')
-        result['document_file'] = generation_result.get('file_path')
-        result['status'] = 'success'
-        
-        # Print summary
-        print_document_summary(generation_result)
-        
-        # STEP 5: READY FOR USER REVIEW
-        print("\n" + "="*70)
-        print("STEP 5: DOCUMENT READY FOR REVIEW")
-        print("="*70)
-        print(f"""
-✅ Your Advanced Directive has been generated!
-
-📄 Document Location: {result['document_file']}
-📋 Questionnaire Data: {result['questionnaire_file']}
-
-NEXT STEPS:
-1. Review the generated document carefully
-2. Make any REFINEMENTS TO THE USER DATA (in JSON) if needed
-3. Regenerate the document to see changes
-4. Once satisfied, add signatures and witness information
-5. Obtain witness signatures and notarization if desired
-
-ARCHITECTURE NOTE:
-- Input Editor validates USER DATA QUALITY only
-- Drafting Agent renders the template (no content decisions)
-- User edits the INPUT, not the generated document structure
-""")
-        
-        return result
-
-    def create_from_data(self, questionnaire_data: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Creates a document from a dictionary of questionnaire data.
-        Non-interactive version for web UI or programmatic use.
-        """
-        result = { 'status': None }
-
-        # STEP 1: VALIDATE & REVIEW INPUT
-        print("\n--- Reviewing data ---")
-        is_valid, review_result = self.input_editor_workflow.review_and_request_changes(
-            questionnaire_data,
-            document_type='advanced_directive'
-        )
-        result['validation_result'] = review_result
-        
-        if not is_valid:
-            result['status'] = 'review_required'
-            return result
-        
-        # STEP 2: SAVE QUESTIONNAIRE AS JSON
-        print("\n--- Saving data ---")
-        questionnaire_file = self.output_dir / "advanced_directive_questionnaire.json"
-        with open(questionnaire_file, 'w') as f:
-            json.dump(questionnaire_data, f, indent=2, default=str)
-        result['questionnaire_file'] = str(questionnaire_file)
-
-        # STEP 3: GENERATE DOCUMENT
-        print("\n--- Generating document ---")
-        generation_result = self.drafting_workflow.generate_from_questionnaire(
-            questionnaire_data,
-            document_type='advanced_directive',
-            save_to_file=True
-        )
-        
-        # Merge results
-        result.update(generation_result)
-        
-        if generation_result.get('status') == 'success':
-            result['status'] = 'success'
-        else:
-            result['status'] = 'generation_error'
-            
-        return result
+        self.drafting_agent = DraftingAgent(api_key, draft_model, draft_temp)
+        self.editing_agent = EditingAgent(api_key, edit_model, edit_temp)
+        self.num_edit_passes = num_edit_passes
     
-    def reload_and_regenerate(self, questionnaire_file: str) -> Dict[str, Any]:
+    def create_document(self, document: LegalDocument) -> LegalDocument:
         """
-        Reload a previously saved questionnaire and regenerate document
-        Useful if user wants to make changes and see updated output
+        Create a legal document through the multi-agent pipeline.
+        
+        Process:
+        1. Draft the document
+        2. Edit the document (configurable number of passes)
+        3. Return the final document
         
         Args:
-            questionnaire_file: Path to saved questionnaire JSON
-        
-        Returns:
-            Generation result dict
-        """
-        try:
-            with open(questionnaire_file, 'r') as f:
-                questionnaire_data = json.load(f)
-        except FileNotFoundError:
-            return {
-                'status': 'error',
-                'error_message': f'File not found: {questionnaire_file}'
-            }
-        
-        # Skip collection, go straight to validation
-        is_valid, review_result = self.input_editor_workflow.review_and_request_changes(
-            questionnaire_data,
-            document_type='advanced_directive'
-        )
-        
-        if not is_valid:
-            return {
-                'status': 'review_required',
-                'validation_result': review_result
-            }
-        
-        # Generate document with updated data
-        generation_result = self.drafting_workflow.generate_from_questionnaire(
-            questionnaire_data,
-            document_type='advanced_directive',
-            save_to_file=True
-        )
-        
-        return generation_result
-
-
-def main_interactive_menu():
-    """Interactive main menu for document creation"""
-    orchestrator = DocumentOrchestrator()
-    
-    while True:
-        print("\n" + "="*70)
-        print("LEGAL DOCUMENT CREATOR - ADVANCED DIRECTIVE")
-        print("="*70)
-        print("""
-1. Create New Advanced Directive
-2. Regenerate from Existing Questionnaire
-3. Exit
-
-Choose an option (1-3): """)
-        
-        choice = input().strip()
-        
-        if choice == '1':
-            result = orchestrator.create_advanced_directive(interactive=True)
-            if result['status'] == 'success':
-                print("\n✅ Advanced Directive created successfully!")
-            else:
-                print(f"\n⚠️  Status: {result['status']}")
-            input("\nPress Enter to continue...")
-        
-        elif choice == '2':
-            questionnaire_file = input("\nEnter questionnaire JSON file path: ").strip()
-            result = orchestrator.reload_and_regenerate(questionnaire_file)
+            document: The legal document to process
             
-            if result.get('status') == 'success':
-                print(f"\n✅ Document regenerated: {result.get('file_path')}")
-            else:
-                print(f"\n❌ Error: {result.get('error_message', 'Unknown error')}")
-            input("\nPress Enter to continue...")
+        Returns:
+            LegalDocument: The document with all revisions
+        """
+        print(f"Starting document creation for: {document.document_type}")
         
-        elif choice == '3':
-            print("\nGoodbye!")
-            break
+        # Step 1: Draft
+        print("\n[DRAFT AGENT] Drafting document...")
+        document.status = "drafting"
+        drafted_content, _ = self.drafting_agent.process(document)
+        document.add_revision(drafted_content, "draft")
+        print(f"Draft completed. Version: {document.current_version}")
         
-        else:
-            print("Invalid choice. Please try again.")
-
-
-if __name__ == "__main__":
-    # Run interactive menu
-    main_interactive_menu()
+        # Step 2: Edit (multiple passes)
+        print("\n[EDIT AGENT] Editing document...")
+        document.status = "editing"
+        
+        for pass_num in range(self.num_edit_passes):
+            print(f"  Edit pass {pass_num + 1}/{self.num_edit_passes}...")
+            edited_content, feedback = self.editing_agent.process(document)
+            document.add_revision(edited_content, "edit", feedback)
+            print(f"  Edit pass {pass_num + 1} completed. Version: {document.current_version}")
+        
+        # Step 3: Mark as completed
+        document.status = "completed"
+        print("\n[COMPLETE] Document creation finished!")
+        
+        return document
+    
+    def save_document(self, document: LegalDocument, output_dir: str = "./output") -> str:
+        """
+        Save the document to a file.
+        
+        Args:
+            document: The legal document to save
+            output_dir: Directory to save the document in
+            
+        Returns:
+            str: Path to the saved file
+        """
+        os.makedirs(output_dir, exist_ok=True)
+        
+        filename = f"{document.id}_{document.document_type.replace(' ', '_')}.txt"
+        filepath = os.path.join(output_dir, filename)
+        
+        with open(filepath, "w", encoding="utf-8") as f:
+            f.write(f"Document Type: {document.document_type}\n")
+            f.write(f"Status: {document.status}\n")
+            f.write(f"Final Version: {document.current_version}\n")
+            f.write("=" * 80 + "\n\n")
+            f.write(document.get_current_content())
+            f.write("\n\n" + "=" * 80 + "\n")
+            f.write("REVISION HISTORY\n")
+            f.write("=" * 80 + "\n\n")
+            
+            for revision in document.get_history():
+                f.write(f"Version {revision['version']} ({revision['agent']}) - {revision['timestamp']}\n")
+                if revision['feedback']:
+                    f.write(f"Feedback: {revision['feedback']}\n")
+                f.write("-" * 40 + "\n")
+        
+        return filepath

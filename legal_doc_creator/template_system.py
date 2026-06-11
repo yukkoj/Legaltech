@@ -6,8 +6,9 @@ Integrates questionnaire data with Jinja2 templates for document drafting
 import json
 from pathlib import Path
 from typing import Dict, Any, Optional
-from jinja2 import Environment, FileSystemLoader, Template, TemplateError
+from jinja2 import Environment, FileSystemLoader, Template, TemplateError, select_autoescape
 import logging
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -18,18 +19,21 @@ class TemplateManager:
     def __init__(self, template_dir: str = "legal_doc_creator/templates"):
         self.template_dir = Path(template_dir)
         self.template_dir.mkdir(parents=True, exist_ok=True)
+        # Added select_autoescape for security best practices
         self.env = Environment(
             loader=FileSystemLoader(str(self.template_dir)),
-            keep_trailing_newline=True
+            keep_trailing_newline=True,
+            autoescape=select_autoescape(['html', 'xml'])
         )
         # Add custom filters
         self._register_filters()
-    
+
     def _register_filters(self):
         """Register custom Jinja2 filters"""
         self.env.filters['yesno'] = lambda v: 'Yes' if v else 'No'
         self.env.filters['capitalize_words'] = lambda v: v.title() if v else ''
         self.env.filters['join_list'] = lambda lst: ', '.join(lst) if lst else ''
+        self.env.globals['now'] = datetime.now # Make datetime.now available as 'now()' in templates
     
     def render_template(self, template_name: str, data: Dict[str, Any]) -> str:
         """Render template with JSON data"""
@@ -300,19 +304,6 @@ I acknowledge this is my wishes regarding health care and authorize my healthcar
 _____________________________
 {{ full_name }}
 Date: _______________
-{% if signature_method == 'witnesses' %}
-
-
-STATEMENT OF WITNESSES
-
-I certify that the above person signed this document in my presence and appears to be of sound mind.
-
-Witness 1: {{ witness_1_name }} ({{ witness_1_phone }})
-Date: _______________
-
-Witness 2: {{ witness_2_name }} ({{ witness_2_phone }})
-Date: _______________
-{% endif %}
 {% if notary_required %}
 
 
@@ -329,6 +320,19 @@ I certify under PENALTY OF PERJURY under the laws of the State of California tha
 WITNESS my hand and official seal.
 _____________________________ (Signature of Notary Public)
 (Seal)
+{% endif %}
+{% if witness_1_name and witness_2_name %}
+
+
+STATEMENT OF WITNESSES
+
+I certify that the above person signed this document in my presence and appears to be of sound mind.
+
+Witness 1: {{ witness_1_name }} ({{ witness_1_phone }})
+Date: _______________
+
+Witness 2: {{ witness_2_name }} ({{ witness_2_phone }})
+Date: _______________
 {% endif %}
 '''
 

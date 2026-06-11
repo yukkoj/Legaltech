@@ -200,29 +200,29 @@ class AdvancedDirectiveQuestionnaireFlow:
         
         if is_california:
             print("In California, an Advanced Directive must be signed with either:")
-            print("  1. Two qualified witnesses")
-            print("  2. A notary public")
+            print("  1. A notary public")
+            print("  2. Two qualified witnesses")
             prompt = "\nHow would you like to validate your document? (Enter 1 or 2): "
         else:
             print("To make your document legally valid, it needs to be signed correctly.")
-            print("Most states require two witnesses. Some allow a notary instead.")
-            print("  1. Use two witnesses")
-            print("  2. Use a notary public (often recommended for interstate validity)")
+            print("A notary is often recommended for interstate validity. Alternatively, you can use two witnesses.")
+            print("  1. Use a notary public")
+            print("  2. Use two witnesses")
             prompt = "\nChoose a validation method (Enter 1 or 2): "
 
         while True:
             choice = input(prompt).strip()
             if choice == '1':
+                self.responses.signature_method = "notary"
+                self.responses.notary_required = True
+                print("\nYou have chosen to use a notary public. No witness information is needed.")
+                break
+            elif choice == '2':
                 self.responses.signature_method = "witnesses"
                 self.responses.notary_required = False
                 print("\nYou have chosen to use two witnesses. You will be asked for their details later.")
                 if not is_california and self._ask_yes_no("Do you want to add an optional notary section as well?"):
                     self.responses.notary_required = True
-                break
-            elif choice == '2':
-                self.responses.signature_method = "notary"
-                self.responses.notary_required = True
-                print("\nYou have chosen to use a notary public. No witness information is needed.")
                 break
             else:
                 print("Invalid choice. Please enter 1 or 2.")

@@ -14,10 +14,12 @@ try:
     from input_editor_agent import InputEditorWorkflow
     from drafting_agent import RefinedDraftingWorkflow
     from template_system import setup_example_template
+    from pdf_generator import generate_pdf_from_document, generate_pdf_from_questionnaire
 except ImportError:
     from legal_doc_creator.input_editor_agent import InputEditorWorkflow
     from legal_doc_creator.drafting_agent import RefinedDraftingWorkflow
     from legal_doc_creator.template_system import setup_example_template
+    from legal_doc_creator.pdf_generator import generate_pdf_from_document, generate_pdf_from_questionnaire
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -212,6 +214,92 @@ def recent_files():
             'status': 'error',
             'error_message': str(e)
         }), 500
+
+
+@app.route('/api/generate-pdf', methods=['POST'])
+def generate_pdf():
+    """
+    Generate PDF from questionnaire data or document text
+    Endpoint: POST /api/generate-pdf
+    Body: JSON with either 'questionnaire_data' or 'document_text'
+    Returns: PDF file path
+    """
+    try:
+        data = request.get_json()
+        
+        # Determine what to convert to PDF
+        if 'questionnaire_data' in data and data['questionnaire_data']:
+            # Generate PDF from questionnaire
+            questionnaire_data = data['questionnaire_data']
+            document_type = data.get('document_type', 'advanced_directive')
+            
+            success, message, pdf_path = generate_pdf_from_questionnaire(
+                questionnaire_data,
+                OUTPUT_DIR,
+                document_type=document_type
+            )
+            
+            if success:
+                return jsonify({
+                    'status': 'success',
+                    'pdf_file': Path(pdf_path).name,
+                    'pdf_path': str(pdf_path),
+                    'message': message
+                })
+            else:
+                return jsonify({
+                    'status': 'error',
+                    'error_message': message
+                }), 500
+        
+        elif 'document_text' in data and data['document_text']:
+            # Generate PDF from document text
+            document_text = data['document_text']
+            title = data.get('title', 'Advanced Directive')
+            
+            success, message, pdf_path = generate_pdf_from_document(
+                document_text,
+                OUTPUT_DIR,
+                title=title
+            )
+            
+            if success:
+                return jsonify({
+                    'status': 'success',
+                    'pdf_file': Path(pdf_path).name,
+                    'pdf_path': str(pdf_path),
+                    'message': message
+                })
+            else:
+                return jsonify({
+                    'status': 'error',
+                    'error_message': message
+                }), 500
+        
+        else:
+            return jsonify({
+                'status': 'error',
+                'error_message': 'No questionnaire_data or document_text provided'
+            }), 400
+    
+    except Exception as e:
+        logger.error(f"PDF generation error: {e}")
+        return jsonify({
+            'status': 'error',
+            'error_message': str(e)
+        }), 500
+
+
+@app.route('/api/download-pdf/<filename>', methods=['GET'])
+def download_pdf(filename):
+    """
+    Download generated PDF file
+    """
+    try:
+        return send_from_directory(OUTPUT_DIR, filename, as_attachment=True, mimetype='application/pdf')
+    except Exception as e:
+        logger.error(f"PDF download error: {e}")
+        return jsonify({'error': str(e)}), 404
 
 
 @app.route('/api/health', methods=['GET'])

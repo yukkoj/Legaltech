@@ -6,6 +6,7 @@ Does NOT touch the generated document
 
 from typing import Dict, List, Any, Tuple
 import logging
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -84,21 +85,12 @@ class InputEditorAgent:
             
             if not has_witnesses and not has_notary:
                 self.feedback.append(
-                    "❌ MISSING: Either 2 witnesses OR notarization is required. Please provide at least one."
+                    "❌ MISSING: Either notarization OR 2 witnesses are required. Please provide at least one."
                 )
-            elif has_witnesses and (not witness_1 or not witness_2):
-                # Partial witnesses provided
-                if witness_1 and not witness_2:
-                    self.feedback.append("❌ MISSING: Witness 2 name is required if providing witnesses.")
-                elif witness_2 and not witness_1:
-                    self.feedback.append("❌ MISSING: Witness 1 name is required if providing witnesses.")
-
-        # Conditionally check for witnesses based on signature method
-        if document_type == 'advanced_directive' and data.get('signature_method') == 'witnesses':
-            if not data.get('witness_1_name', '').strip():
-                self.feedback.append("❌ MISSING: First witness name is required when using witnesses.")
-            if not data.get('witness_2_name', '').strip():
-                self.feedback.append("❌ MISSING: Second witness name is required when using witnesses.")
+            
+            # Check for partial witness information
+            if (witness_1 and not witness_2) or (not witness_1 and witness_2):
+                self.feedback.append("❌ INCOMPLETE: Both Witness 1 and Witness 2 names are required if providing witness information.")
 
     def _check_consistency(self, data: Dict[str, Any]):
         """Check for logical consistency in responses"""
@@ -167,8 +159,8 @@ class InputEditorAgent:
         # Check date format
         dob = data.get('date_of_birth', '').strip()
         if dob and not self._is_valid_date_format(dob):
-            self.suggestions.append(
-                f"⚠️ Date of birth '{dob}' - please verify format is MM/DD/YYYY"
+            self.feedback.append(
+                f"❌ INVALID: Date of birth '{dob}' is not a valid date. Please use the date picker to select a valid date."
             )
         
         # Check for very short text fields that should be longer
@@ -232,16 +224,19 @@ class InputEditorAgent:
                 )
     
     def _is_valid_date_format(self, date_str: str) -> bool:
-        """Check if date string is reasonable format"""
-        # Simple check for MM/DD/YYYY or similar
-        parts = date_str.split('/')
-        if len(parts) != 3:
+        """Check if date string is a valid date in YYYY-MM-DD format."""
+        if not isinstance(date_str, str):
             return False
         try:
-            month, day, year = int(parts[0]), int(parts[1]), int(parts[2])
-            return 1 <= month <= 12 and 1 <= day <= 31 and 1900 <= year <= 2025
+            # The HTML <input type="date"> provides date in 'YYYY-MM-DD' format.
+            dt = datetime.strptime(date_str, '%Y-%m-%d')
+            # Check for a reasonable year range (e.g., not in the future).
+            if 1900 <= dt.year <= datetime.now().year:
+                return True
         except (ValueError, TypeError):
+            # This will catch invalid dates like '2023-02-30'
             return False
+        return False
     
     def generate_review_report(self, review_result: Dict[str, Any]) -> str:
         """Generate human-readable review report"""
