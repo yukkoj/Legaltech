@@ -301,18 +301,55 @@ My preference regarding blood transfusions is uncertain, and I leave this decisi
 PART III: CONDITION-SPECIFIC INSTRUCTIONS
 
 {% if condition_permanently_unconscious %}
-If I am permanently unconscious (persistent vegetative state):
-My preference: {{ condition_permanently_unconscious }}
+If I am permanently unconscious (e.g., a persistent vegetative state), my preference regarding life-sustaining treatment is as follows:
+{% if condition_permanently_unconscious == 'yes' %}
+I want life-sustaining treatment.
+{% elif condition_permanently_unconscious == 'no' %}
+I do NOT want life-sustaining treatment.
+{% elif condition_permanently_unconscious == 'only_if_recovery' %}
+I want life-sustaining treatment only if my medical team believes recovery to a meaningful quality of life is likely.
+{% else %}
+My preference is uncertain, and I leave this decision to my healthcare agent.
+{% endif %}
 {% endif %}
 
 {% if condition_terminal_illness %}
-If I have a terminal illness:
-My preference: {{ condition_terminal_illness }}
+If I am diagnosed with a terminal illness, my preference regarding life-sustaining treatment is as follows:
+{% if condition_terminal_illness == 'yes' %}
+I want life-sustaining treatment.
+{% elif condition_terminal_illness == 'no' %}
+I do NOT want life-sustaining treatment.
+{% elif condition_terminal_illness == 'only_if_recovery' %}
+I want life-sustaining treatment only if my medical team believes recovery to a meaningful quality of life is likely.
+{% else %}
+My preference is uncertain, and I leave this decision to my healthcare agent.
+{% endif %}
 {% endif %}
 
 {% if condition_severe_dementia %}
-If I have advanced dementia:
-My preference: {{ condition_severe_dementia }}
+If I am diagnosed with severe dementia or another irreversible cognitive condition, my preference regarding life-sustaining treatment is as follows:
+{% if condition_severe_dementia == 'yes' %}
+I want life-sustaining treatment.
+{% elif condition_severe_dementia == 'no' %}
+I do NOT want life-sustaining treatment.
+{% elif condition_severe_dementia == 'only_if_recovery' %}
+I want life-sustaining treatment only if my medical team believes recovery to a meaningful quality of life is likely.
+{% else %}
+My preference is uncertain, and I leave this decision to my healthcare agent.
+{% endif %}
+{% endif %}
+
+{% if condition_other_incurable %}
+If I am diagnosed with another incurable condition, my preference regarding life-sustaining treatment is as follows:
+{% if condition_other_incurable == 'yes' %}
+I want life-sustaining treatment.
+{% elif condition_other_incurable == 'no' %}
+I do NOT want life-sustaining treatment.
+{% elif condition_other_incurable == 'only_if_recovery' %}
+I want life-sustaining treatment only if my medical team believes recovery to a meaningful quality of life is likely.
+{% else %}
+My preference is uncertain, and I leave this decision to my healthcare agent.
+{% endif %}
 {% endif %}
 
 PART IV: PAIN MANAGEMENT
