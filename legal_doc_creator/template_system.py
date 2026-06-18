@@ -300,56 +300,56 @@ My preference regarding blood transfusions is uncertain, and I leave this decisi
 
 PART III: CONDITION-SPECIFIC INSTRUCTIONS
 
-{% if condition_permanently_unconscious %}
-If I am permanently unconscious (e.g., a persistent vegetative state), my preference regarding life-sustaining treatment is as follows:
-{% if condition_permanently_unconscious == 'yes' %}
-I want life-sustaining treatment.
-{% elif condition_permanently_unconscious == 'no' %}
-I do NOT want life-sustaining treatment.
-{% elif condition_permanently_unconscious == 'only_if_recovery' %}
-I want life-sustaining treatment only if my medical team believes recovery to a meaningful quality of life is likely.
-{% else %}
-My preference is uncertain, and I leave this decision to my healthcare agent.
-{% endif %}
+{# Initialize lists to group conditions by preference #}
+{% set conditions_for_no = [] %}
+{% set conditions_for_yes = [] %}
+{% set conditions_for_recovery = [] %}
+{% set conditions_for_uncertain = [] %}
+
+{# Helper dictionary to map condition keys to their descriptions #}
+{% set condition_map = {
+    'condition_permanently_unconscious': 'I am permanently unconscious (e.g., a persistent vegetative state).',
+    'condition_terminal_illness': 'I am diagnosed with a terminal illness.',
+    'condition_severe_dementia': 'I am diagnosed with severe dementia or another irreversible cognitive condition.',
+    'condition_other_incurable': 'I am diagnosed with another incurable condition.'
+} %}
+
+{# Populate the lists based on user choices #}
+{% for key, description in condition_map.items() %}
+    {% if data[key] == 'no' %}{% set _ = conditions_for_no.append(description) %}
+    {% elif data[key] == 'yes' %}{% set _ = conditions_for_yes.append(description) %}
+    {% elif data[key] == 'only_if_recovery' %}{% set _ = conditions_for_recovery.append(description) %}
+    {% elif data[key] == 'uncertain' %}{% set _ = conditions_for_uncertain.append(description) %}
+    {% endif %}
+{% endfor %}
+
+{# Render the grouped preferences if any conditions were selected #}
+{% if conditions_for_no %}
+I do NOT want life-sustaining treatment if:
+{% for condition in conditions_for_no %}
+- {{ condition }}
+{% endfor %}
 {% endif %}
 
-{% if condition_terminal_illness %}
-If I am diagnosed with a terminal illness, my preference regarding life-sustaining treatment is as follows:
-{% if condition_terminal_illness == 'yes' %}
-I want life-sustaining treatment.
-{% elif condition_terminal_illness == 'no' %}
-I do NOT want life-sustaining treatment.
-{% elif condition_terminal_illness == 'only_if_recovery' %}
-I want life-sustaining treatment only if my medical team believes recovery to a meaningful quality of life is likely.
-{% else %}
-My preference is uncertain, and I leave this decision to my healthcare agent.
-{% endif %}
+{% if conditions_for_yes %}
+I WANT life-sustaining treatment if:
+{% for condition in conditions_for_yes %}
+- {{ condition }}
+{% endfor %}
 {% endif %}
 
-{% if condition_severe_dementia %}
-If I am diagnosed with severe dementia or another irreversible cognitive condition, my preference regarding life-sustaining treatment is as follows:
-{% if condition_severe_dementia == 'yes' %}
-I want life-sustaining treatment.
-{% elif condition_severe_dementia == 'no' %}
-I do NOT want life-sustaining treatment.
-{% elif condition_severe_dementia == 'only_if_recovery' %}
-I want life-sustaining treatment only if my medical team believes recovery to a meaningful quality of life is likely.
-{% else %}
-My preference is uncertain, and I leave this decision to my healthcare agent.
-{% endif %}
+{% if conditions_for_recovery %}
+I want life-sustaining treatment ONLY IF my medical team believes recovery to a meaningful quality of life is likely, in the following situations:
+{% for condition in conditions_for_recovery %}
+- {{ condition }}
+{% endfor %}
 {% endif %}
 
-{% if condition_other_incurable %}
-If I am diagnosed with another incurable condition, my preference regarding life-sustaining treatment is as follows:
-{% if condition_other_incurable == 'yes' %}
-I want life-sustaining treatment.
-{% elif condition_other_incurable == 'no' %}
-I do NOT want life-sustaining treatment.
-{% elif condition_other_incurable == 'only_if_recovery' %}
-I want life-sustaining treatment only if my medical team believes recovery to a meaningful quality of life is likely.
-{% else %}
-My preference is uncertain, and I leave this decision to my healthcare agent.
-{% endif %}
+{% if conditions_for_uncertain %}
+My preference is UNCERTAIN, and I leave the decision to my healthcare agent in the following situations:
+{% for condition in conditions_for_uncertain %}
+- {{ condition }}
+{% endfor %}
 {% endif %}
 
 PART IV: PAIN MANAGEMENT
