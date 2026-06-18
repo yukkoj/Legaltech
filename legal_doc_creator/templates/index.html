@@ -192,6 +192,50 @@
                         </div>
                     </div>
 
+                    <hr class="divider">
+                    <h3 style="margin-top: 20px;">Condition-Specific Preferences</h3>
+                    <p class="section-info">If you develop these conditions, indicate your wishes about life-sustaining treatment.</p>
+
+                    <div class="treatment-group">
+                        <p class="treatment-question">If you are permanently unconscious (e.g., persistent vegetative state)?</p>
+                        <div class="radio-group">
+                            <label><input type="radio" name="condition_permanently_unconscious" value="yes"> Yes</label>
+                            <label><input type="radio" name="condition_permanently_unconscious" value="no"> No</label>
+                            <label><input type="radio" name="condition_permanently_unconscious" value="only_if_recovery"> Only if recovery is likely</label>
+                            <label><input type="radio" name="condition_permanently_unconscious" value="uncertain"> Uncertain</label>
+                        </div>
+                    </div>
+
+                    <div class="treatment-group">
+                        <p class="treatment-question">If you are diagnosed with a terminal illness?</p>
+                        <div class="radio-group">
+                            <label><input type="radio" name="condition_terminal_illness" value="yes"> Yes</label>
+                            <label><input type="radio" name="condition_terminal_illness" value="no"> No</label>
+                            <label><input type="radio" name="condition_terminal_illness" value="only_if_recovery"> Only if recovery is likely</label>
+                            <label><input type="radio" name="condition_terminal_illness" value="uncertain"> Uncertain</label>
+                        </div>
+                    </div>
+
+                    <div class="treatment-group">
+                        <p class="treatment-question">If you are diagnosed with severe dementia?</p>
+                        <div class="radio-group">
+                            <label><input type="radio" name="condition_severe_dementia" value="yes"> Yes</label>
+                            <label><input type="radio" name="condition_severe_dementia" value="no"> No</label>
+                            <label><input type="radio" name="condition_severe_dementia" value="only_if_recovery"> Only if recovery is likely</label>
+                            <label><input type="radio" name="condition_severe_dementia" value="uncertain"> Uncertain</label>
+                        </div>
+                    </div>
+
+                    <div class="treatment-group">
+                        <p class="treatment-question">If you are diagnosed with another incurable condition?</p>
+                        <div class="radio-group">
+                            <label><input type="radio" name="condition_other_incurable" value="yes"> Yes</label>
+                            <label><input type="radio" name="condition_other_incurable" value="no"> No</label>
+                            <label><input type="radio" name="condition_other_incurable" value="only_if_recovery"> Only if recovery is likely</label>
+                            <label><input type="radio" name="condition_other_incurable" value="uncertain"> Uncertain</label>
+                        </div>
+                    </div>
+
                     <div class="checkbox-group">
                         <label>
                             <input type="checkbox" name="pain_management_priority" value="true">
@@ -292,12 +336,20 @@
                             <input type="tel" id="witness1Phone" name="witness_1_phone" placeholder="(555) 123-4567">
                         </div>
                         <div class="form-group">
+                            <label for="witness1Address">Witness 1 Address</label>
+                            <input type="text" id="witness1Address" name="witness_1_address" placeholder="Enter witness's address">
+                        </div>
+                        <div class="form-group">
                             <label for="witness2Name">Witness 2 Full Name</label>
                             <input type="text" id="witness2Name" name="witness_2_name" placeholder="Full name">
                         </div>
                         <div class="form-group">
                             <label for="witness2Phone">Witness 2 Phone Number</label>
                             <input type="tel" id="witness2Phone" name="witness_2_phone" placeholder="(555) 123-4567">
+                        </div>
+                        <div class="form-group">
+                            <label for="witness2Address">Witness 2 Address</label>
+                            <input type="text" id="witness2Address" name="witness_2_address" placeholder="Enter witness's address">
                         </div>
                     </div>
 

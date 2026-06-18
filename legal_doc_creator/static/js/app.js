@@ -629,8 +629,10 @@ function setupEventListeners() {
                 // Clear witness fields when unchecked to avoid sending stale data
                 document.getElementById('witness1Name').value = '';
                 document.getElementById('witness1Phone').value = '';
+                document.getElementById('witness1Address').value = '';
                 document.getElementById('witness2Name').value = '';
                 document.getElementById('witness2Phone').value = '';
+                document.getElementById('witness2Address').value = '';
             }
         });
     }

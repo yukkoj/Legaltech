@@ -81,6 +81,15 @@ class PDFGenerator:
             leading=14
         ))
         
+        # Table body text style
+        styles.add(ParagraphStyle(
+            name='TableBody',
+            parent=styles['BodyText'],
+            fontSize=10,
+            alignment=TA_LEFT,
+            leading=12
+        ))
+        
         # Signature line style
         styles.add(ParagraphStyle(
             name='SignatureLine',
@@ -91,6 +100,16 @@ class PDFGenerator:
         ))
         
         return styles
+
+    @staticmethod
+    def _format_phone(s: str) -> str:
+        """Formats a 10-digit phone number string."""
+        if not s:
+            return ''
+        digits = ''.join(filter(str.isdigit, str(s)))
+        if len(digits) == 10:
+            return f"({digits[0:3]}) {digits[3:6]}-{digits[6:10]}"
+        return s
     
     def text_to_pdf(self, text_content: str, output_path: str, 
                    title: Optional[str] = None) -> Tuple[bool, str]:
@@ -221,13 +240,16 @@ class PDFGenerator:
             
             # Healthcare Agent Section
             story.append(Paragraph('HEALTHCARE AGENT (PRIMARY)', self.styles['SectionHeading']))
-            
+
+            agent_address = questionnaire_data.get('healthcare_agent_address', 'N/A')
+            agent_address_p = Paragraph(self._escape_special_chars(agent_address).replace('\n', '<br/>'), self.styles['TableBody'])
+
             agent_info = [
                 ('Name', questionnaire_data.get('healthcare_agent_name', 'N/A')),
                 ('Relationship', questionnaire_data.get('healthcare_agent_relationship', 'N/A')),
-                ('Phone', questionnaire_data.get('healthcare_agent_phone', 'N/A')),
+                ('Phone', self._format_phone(questionnaire_data.get('healthcare_agent_phone', 'N/A'))),
                 ('Email', questionnaire_data.get('healthcare_agent_email', 'N/A')),
-                ('Address', questionnaire_data.get('healthcare_agent_address', 'N/A')),
+                ('Address', agent_address_p),
             ]
             
             story.extend(self._build_info_table(agent_info))
@@ -237,12 +259,15 @@ class PDFGenerator:
             if questionnaire_data.get('alternate_agent_name'):
                 story.append(Paragraph('FIRST ALTERNATE HEALTHCARE AGENT', self.styles['SectionHeading']))
                 
+                alt_agent_address = questionnaire_data.get('alternate_agent_address', 'N/A')
+                alt_agent_address_p = Paragraph(self._escape_special_chars(alt_agent_address).replace('\n', '<br/>'), self.styles['TableBody'])
+
                 alt_agent_info = [
                     ('Name', questionnaire_data.get('alternate_agent_name', 'N/A')),
                     ('Relationship', questionnaire_data.get('alternate_agent_relationship', 'N/A')),
-                    ('Phone', questionnaire_data.get('alternate_agent_phone', 'N/A')),
+                    ('Phone', self._format_phone(questionnaire_data.get('alternate_agent_phone', 'N/A'))),
                     ('Email', questionnaire_data.get('alternate_agent_email', 'N/A')),
-                    ('Address', questionnaire_data.get('alternate_agent_address', 'N/A')),
+                    ('Address', alt_agent_address_p),
                 ]
                 
                 story.extend(self._build_info_table(alt_agent_info))
@@ -252,12 +277,15 @@ class PDFGenerator:
             if questionnaire_data.get('alternate_agent_2_name'):
                 story.append(Paragraph('SECOND ALTERNATE HEALTHCARE AGENT', self.styles['SectionHeading']))
                 
+                alt_agent_2_address = questionnaire_data.get('alternate_agent_2_address', 'N/A')
+                alt_agent_2_address_p = Paragraph(self._escape_special_chars(alt_agent_2_address).replace('\n', '<br/>'), self.styles['TableBody'])
+
                 alt_agent_2_info = [
                     ('Name', questionnaire_data.get('alternate_agent_2_name', 'N/A')),
                     ('Relationship', questionnaire_data.get('alternate_agent_2_relationship', 'N/A')),
-                    ('Phone', questionnaire_data.get('alternate_agent_2_phone', 'N/A')),
+                    ('Phone', self._format_phone(questionnaire_data.get('alternate_agent_2_phone', 'N/A'))),
                     ('Email', questionnaire_data.get('alternate_agent_2_email', 'N/A')),
-                    ('Address', questionnaire_data.get('alternate_agent_2_address', 'N/A')),
+                    ('Address', alt_agent_2_address_p),
                 ]
                 
                 story.extend(self._build_info_table(alt_agent_2_info))

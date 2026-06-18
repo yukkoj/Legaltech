@@ -61,11 +61,11 @@ class AdvancedDirectiveQuestionnaire:
     
     # Organ/Tissue Donation
     want_organ_donation: str = ""  # "yes", "no", "uncertain"
-    organ_donation_types: List[str] = None  # ["heart", "lungs", "kidney", "liver", "all"]
+    organ_donation_types: List[str] = None  # ["all","heart", "lungs", "kidney", "liver"]
     
     # Tissue Donation
     want_tissue_donation: str = ""  # "yes", "no", "uncertain"
-    tissue_donation_types: List[str] = None  # ["cornea", "bone", "skin", "all"]
+    tissue_donation_types: List[str] = None  # ["all", "cornea", "bone", "skin"]
     
     # Body Disposition
     body_disposition: str = ""  # "burial", "cremation", "donation_to_science", "no_preference"
@@ -91,8 +91,10 @@ class AdvancedDirectiveQuestionnaire:
     # Witnesses/Notarization
     witness_1_name: str = ""
     witness_1_phone: str = ""
+    witness_1_address: str = ""
     witness_2_name: str = ""
     witness_2_phone: str = ""
+    witness_2_address: str = ""
     notary_required: bool = False
     
     # Review and Updates
@@ -370,9 +372,11 @@ class AdvancedDirectiveQuestionnaireFlow:
         
         self.responses.witness_1_name = input("Witness 1 Full Name: ").strip()
         self.responses.witness_1_phone = input("Witness 1 Phone Number: ").strip()
+        self.responses.witness_1_address = input("Witness 1 Address: ").strip()
         
         self.responses.witness_2_name = input("Witness 2 Full Name: ").strip()
         self.responses.witness_2_phone = input("Witness 2 Phone Number: ").strip()
+        self.responses.witness_2_address = input("Witness 2 Address: ").strip()
     
     def _get_treatment_preference(self, question: str) -> str:
         """Get treatment preference response"""

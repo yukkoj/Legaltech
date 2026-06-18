@@ -34,6 +34,16 @@ class TemplateManager:
         self.env.filters['capitalize_words'] = lambda v: v.title() if v else ''
         self.env.filters['join_list'] = lambda lst: ', '.join(lst) if lst else ''
         self.env.globals['now'] = datetime.now # Make datetime.now available as 'now()' in templates
+
+        def format_phone(s):
+            """Formats a 10-digit phone number string."""
+            if not s:
+                return ''
+            digits = ''.join(filter(str.isdigit, str(s)))
+            if len(digits) == 10:
+                return f"({digits[0:3]}) {digits[3:6]}-{digits[6:10]}"
+            return s
+        self.env.filters['format_phone'] = format_phone
     
     def render_template(self, template_name: str, data: Dict[str, Any]) -> str:
         """Render template with JSON data"""
@@ -47,7 +57,7 @@ class TemplateManager:
     def create_template(self, name: str, content: str):
         """Create a new template file"""
         template_path = self.template_dir / name
-        template_path.write_text(content)
+        template_path.write_text(content, encoding='utf-8')
         logger.info(f"Template created: {template_path}")
 
 
@@ -197,22 +207,26 @@ PART I: DESIGNATION OF HEALTHCARE AGENT
 
 I designate {{ healthcare_agent_name }} ({{ healthcare_agent_relationship }}) as my healthcare agent to make medical decisions on my behalf if I am unable to do so.
 
-Phone: {{ healthcare_agent_phone }}
+Phone: {{ healthcare_agent_phone | format_phone }}
 Email: {{ healthcare_agent_email }}
 Address: {{ healthcare_agent_address }}
 
 {% if alternate_agent_name %}
 FIRST ALTERNATE HEALTHCARE AGENT:
-If {{ healthcare_agent_name }} is unable or unwilling to serve, I designate {{ alternate_agent_name }} ({{ alternate_agent_relationship }}) as my first alternate healthcare agent.
-Phone: {{ alternate_agent_phone }}
+If {{ healthcare_agent_name }} is unable or unwilling to serve, 
+I designate {{ alternate_agent_name }} ({{ alternate_agent_relationship }}) as my first alternate healthcare agent.
+
+Phone: {{ alternate_agent_phone | format_phone }}
 Email: {{ alternate_agent_email }}
 Address: {{ alternate_agent_address }}
 {% endif %}
 
 {% if alternate_agent_2_name %}
 SECOND ALTERNATE HEALTHCARE AGENT:
-If my primary and first alternate agents are unable or unwilling to serve, I designate {{ alternate_agent_2_name }} ({{ alternate_agent_2_relationship }}) as my second alternate healthcare agent.
-Phone: {{ alternate_agent_2_phone }}
+If my primary and first alternate agents are unable or unwilling to serve, 
+I designate {{ alternate_agent_2_name }} ({{ alternate_agent_2_relationship }}) as my second alternate healthcare agent.
+
+Phone: {{ alternate_agent_2_phone | format_phone }}
 Email: {{ alternate_agent_2_email }}
 Address: {{ alternate_agent_2_address }}
 {% endif %}
@@ -397,12 +411,33 @@ _____________________________ (Signature of Notary Public)
 
 STATEMENT OF WITNESSES
 
-I certify that the above person signed this document in my presence and appears to be of sound mind.
+I declare under penalty of perjury under the laws of California that
+(1) the individual who signed or acknowledged this advance health care directive is personally known to me, 
+or that the individual’s identity was proven to me by convincing evidence, 
+(2) the individual signed or acknowledged this advance directive in my presence, 
+(3) the individual appears to be of sound mind and under no duress, fraud, or undue influence, 
+(4) I am not a person appointed as agent by this advance health care directive, and 
+(5) I am not the individual’s health care provider, an employee of the individual’s health care provider, 
+the operator of a community care facility, an employee of an operator of a community care facility, 
+the operator of a residential care facility for the elderly, 
+nor an employee of an operator of a residential care facility for the elderly.
 
-Witness 1: {{ witness_1_name }} ({{ witness_1_phone }})
+Witness 1: {{ witness_1_name }} ({{ witness_1_phone | format_phone }})
+Address: {{ witness_1_address }}
+
+Signature: _______________
+
 Date: _______________
 
-Witness 2: {{ witness_2_name }} ({{ witness_2_phone }})
+I further declare under penalty of perjury under the laws of California that 
+I am not related to the individual executing this advance health care directive by blood, marriage, or adoption, and, 
+to the best of my knowledge, I am not entitled to any part of the individual’s estate upon his or her death under a will now existing or by operation of law.
+
+Witness 2: {{ witness_2_name }} ({{ witness_2_phone | format_phone }})
+Address: {{ witness_2_address }}
+
+Signature: _______________
+
 Date: _______________
 {% endif %}
 '''

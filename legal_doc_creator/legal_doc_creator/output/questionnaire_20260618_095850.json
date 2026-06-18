@@ -23,9 +23,9 @@
   "want_antibiotics": "only_if_recovery",
   "pain_management_priority": true,
   "accept_medication_side_effects": true,
-  "personal_values": "I wish to maintain my ability to make decisions, communicate, and perform basic self-care (walking, eating, and hygiene) with no assistance.",
-  "quality_of_life_definition": "If I lose these core abilities due to a permanent physical or mental disability, I would consider my independence lost and not worth living.",
-  "fears_and_concerns": "Being in pain, unable to take care of myself without the aid of others. Prevents me from engaging in meaningful activities or experiencing joy, and from which there is no reasonable prospect of recovery.",
+  "personal_values": "I wish to maintain my ability to make decisions, communicate, and perform basic self-care (like eating and hygiene) with no assistance.",
+  "quality_of_life_definition": "If I lose these core abilities due to a permanent physical or mental disability, I would consider my independence lost.",
+  "fears_and_concerns": "Being in pain, unable to take care of myself without the aid of others - prevents me from engaging in meaningful activities or experiencing joy, and from which there is no reasonable prospect of recovery.",
   "religious_affiliation": "None",
   "religious_instructions": "None",
   "cultural_considerations": "None",
@@ -35,8 +35,6 @@
   "notary_required": true,
   "witness_1_name": "",
   "witness_1_phone": "",
-  "witness_1_address": "",
   "witness_2_name": "",
-  "witness_2_phone": "",
-  "witness_2_address": ""
+  "witness_2_phone": ""
 }
