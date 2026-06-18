@@ -20,18 +20,21 @@ class AdvancedDirectiveQuestionnaire:
     healthcare_agent_name: str = ""
     healthcare_agent_phone: str = ""
     healthcare_agent_email: str = ""
+    healthcare_agent_address: str = ""
     healthcare_agent_relationship: str = ""
     
     # Alternate Healthcare Agent
     alternate_agent_name: str = ""
     alternate_agent_phone: str = ""
     alternate_agent_email: str = ""
+    alternate_agent_address: str = ""
     alternate_agent_relationship: str = ""
     
     # Second Alternate Healthcare Agent
     alternate_agent_2_name: str = ""
     alternate_agent_2_phone: str = ""
     alternate_agent_2_email: str = ""
+    alternate_agent_2_address: str = ""
     alternate_agent_2_relationship: str = ""
     
     # Signature Method
@@ -176,6 +179,7 @@ class AdvancedDirectiveQuestionnaireFlow:
         self.responses.healthcare_agent_relationship = input("Relationship to you: ").strip()
         self.responses.healthcare_agent_phone = input("Phone Number: ").strip()
         self.responses.healthcare_agent_email = input("Email Address: ").strip()
+        self.responses.healthcare_agent_address = input("Mailing Address: ").strip()
     
     def _collect_alternate_agent(self):
         """Collect alternate healthcare agent information"""
@@ -184,6 +188,7 @@ class AdvancedDirectiveQuestionnaireFlow:
         self.responses.alternate_agent_relationship = input("Relationship to you: ").strip()
         self.responses.alternate_agent_phone = input("Phone Number: ").strip()
         self.responses.alternate_agent_email = input("Email Address: ").strip()
+        self.responses.alternate_agent_address = input("Mailing Address: ").strip()
     
     def _collect_second_alternate_agent(self):
         """Collect second alternate healthcare agent information"""
@@ -192,6 +197,7 @@ class AdvancedDirectiveQuestionnaireFlow:
         self.responses.alternate_agent_2_relationship = input("Relationship to you: ").strip()
         self.responses.alternate_agent_2_phone = input("Phone Number: ").strip()
         self.responses.alternate_agent_2_email = input("Email Address: ").strip()
+        self.responses.alternate_agent_2_address = input("Mailing Address: ").strip()
     
     def _collect_signature_method(self):
         """Collect signature preference for California."""

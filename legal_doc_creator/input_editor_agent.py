@@ -4,7 +4,7 @@ Focused on data quality, completeness, and consistency
 Does NOT touch the generated document
 """
 
-from typing import Dict, List, Any, Tuple
+from typing import Dict, List, Any, Tuple, Optional
 import logging
 from datetime import datetime
 import os
@@ -37,7 +37,7 @@ class InputEditorAgent:
         
         if api_key:
             genai.configure(api_key=api_key)
-            self.model = genai.GenerativeModel('gemini-3.5-flash')
+            self.model = genai.GenerativeModel('gemini-2.5-flash')
         else:
             self.model = None
             logger.warning("InputEditorAgent: No Gemini API key provided. LLM-based analysis will be skipped.")
@@ -122,19 +122,19 @@ class InputEditorAgent:
         
         # If healthcare agent is designated, they should have contact info
         if data.get('healthcare_agent_name'):
-            if not data.get('healthcare_agent_phone') and not data.get('healthcare_agent_email'):
+            if not (data.get('healthcare_agent_phone') or data.get('healthcare_agent_email') or data.get('healthcare_agent_address')):
                 self.feedback.append(
-                    "❌ INCONSISTENT: Healthcare agent designated but no contact information provided"
+                    "❌ INCONSISTENT: Healthcare agent designated but no contact information (phone, email, or address) provided."
                 )
         if data.get('alternate_agent_name'):
-            if not data.get('alternate_agent_phone') and not data.get('alternate_agent_email'):
+            if not (data.get('alternate_agent_phone') or data.get('alternate_agent_email') or data.get('alternate_agent_address')):
                 self.feedback.append(
-                    "❌ INCONSISTENT: First alternate agent is designated but no contact information is provided."
+                    "❌ INCONSISTENT: First alternate agent is designated but no contact information (phone, email, or address) is provided."
                 )
         if data.get('alternate_agent_2_name'):
-            if not data.get('alternate_agent_2_phone') and not data.get('alternate_agent_2_email'):
+            if not (data.get('alternate_agent_2_phone') or data.get('alternate_agent_2_email') or data.get('alternate_agent_2_address')):
                 self.feedback.append(
-                    "❌ INCONSISTENT: Second alternate agent is designated but no contact information is provided."
+                    "❌ INCONSISTENT: Second alternate agent is designated but no contact information (phone, email, or address) is provided."
                 )
         
         # If organ donation is yes, donation types should be specified
@@ -268,6 +268,7 @@ class InputEditorAgent:
 
         prompt = f"""
         You are a helpful assistant reviewing a user's input for a legal document (an Advance Directive).
+        Your goal is to help the user make their wishes as clear and unambiguous as possible.
         Analyze the following user-provided statements for potential issues.
         
         User Statements:
@@ -277,15 +278,25 @@ class InputEditorAgent:
         - Other instructions: "{free_text_data['other_instructions']}"
 
         Review these statements and identify:
-        1.  **Ambiguities**: Phrases that are unclear or could be interpreted in multiple ways.
+        1.  **Ambiguities**: Phrases that are unclear or could be interpreted in multiple ways (e.g., "be comfortable").
         2.  **Contradictions**: Statements that seem to conflict with each other.
-        3.  **Actionable Suggestions**: Gentle suggestions for how the user could make their wishes clearer.
 
         Provide your feedback in a JSON format with two keys: "issues" and "suggestions".
         - "issues" should be a list of strings for critical problems that might block drafting.
-        - "suggestions" should be a list of strings for helpful advice.
-        If there are no problems, return empty lists.
+        - "suggestions" should be a list of objects, where each object provides advice for improving clarity. Each object should have three keys:
+            - "original_text": The specific vague phrase from the user's input.
+            - "suggestion": A gentle explanation of why the phrase is ambiguous and what the user should consider.
+            - "example_revision": A concrete example of how the user could rephrase their wish to be clearer.
+
+        If there are no problems, return empty lists for both "issues" and "suggestions".
         IMPORTANT: Your entire response must be a single valid JSON object.
+
+        Example of a good object inside the "suggestions" list:
+        {{
+            "original_text": "I want to be comfortable.",
+            "suggestion": "The term 'comfortable' can be interpreted in many ways. It's helpful to specify what comfort means to you.",
+            "example_revision": "For example, you could write: 'I want to be kept clean, in a quiet room, with my favorite music playing, and receive medication to be free from pain, even if it makes me drowsy.'"
+        }}
 
         Your JSON response:
         """
@@ -306,8 +317,16 @@ class InputEditorAgent:
                     self.feedback.append(f"❌ LLM REVIEW: {issue}")
             
             if llm_feedback.get("suggestions"):
-                for suggestion in llm_feedback["suggestions"]:
-                    self.suggestions.append(f"💡 LLM SUGGESTION: {suggestion}")
+                for suggestion in llm_feedback.get("suggestions", []):
+                    if isinstance(suggestion, dict) and all(k in suggestion for k in ["original_text", "suggestion", "example_revision"]):
+                        formatted_suggestion = (
+                            f"Regarding \"{suggestion['original_text']}\": {suggestion['suggestion']} "
+                            f"For example: \"{suggestion['example_revision']}\""
+                        )
+                        self.suggestions.append(f"💡 LLM SUGGESTION: {formatted_suggestion}")
+                    else:
+                        # Fallback for old format (string) or malformed object
+                        self.suggestions.append(f"💡 LLM SUGGESTION: {str(suggestion)}")
 
         except Exception as e:
             logger.error(f"LLM analysis failed in InputEditorAgent: {e}")

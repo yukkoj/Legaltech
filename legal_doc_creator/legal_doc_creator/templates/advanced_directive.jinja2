@@ -3,9 +3,10 @@
 {% set today = now() %}
 
 ADVANCE DIRECTIVE FOR HEALTH CARE
-STATE OF {{ state_of_residence | upper }}
+STATE OF CALIFORNIA
 
-I, {{ full_name }}, being of sound mind and at least eighteen (18) years of age, execute this Advance Directive for Health Care.
+I, {{ full_name }}, being of sound mind and at least eighteen (18) years of age, execute this Advance Directive for Health Care. 
+I revoke any prior advance directives I have made. This document reflects my healthcare preferences as of {{ today.strftime("%B %d, %Y") }}.
 
 PURPOSE:
 This document allows me to make known my wishes regarding my medical treatment if I become unable to communicate them. I have the right to refuse any medical treatment.
@@ -16,12 +17,14 @@ I designate {{ healthcare_agent_name }} ({{ healthcare_agent_relationship }}) as
 
 Phone: {{ healthcare_agent_phone }}
 Email: {{ healthcare_agent_email }}
+Address: {{ healthcare_agent_address }}
 
 {% if alternate_agent_name %}
 FIRST ALTERNATE HEALTHCARE AGENT:
 If {{ healthcare_agent_name }} is unable or unwilling to serve, I designate {{ alternate_agent_name }} ({{ alternate_agent_relationship }}) as my first alternate healthcare agent.
 Phone: {{ alternate_agent_phone }}
 Email: {{ alternate_agent_email }}
+Address: {{ alternate_agent_address }}
 {% endif %}
 
 {% if alternate_agent_2_name %}
@@ -29,6 +32,7 @@ SECOND ALTERNATE HEALTHCARE AGENT:
 If my primary and first alternate agents are unable or unwilling to serve, I designate {{ alternate_agent_2_name }} ({{ alternate_agent_2_relationship }}) as my second alternate healthcare agent.
 Phone: {{ alternate_agent_2_phone }}
 Email: {{ alternate_agent_2_email }}
+Address: {{ alternate_agent_2_address }}
 {% endif %}
 
 PART II: LIFE-SUSTAINING TREATMENT PREFERENCES
@@ -192,15 +196,19 @@ NOTARIZATION
 
 A notary public or other officer completing this certificate verifies only the identity of the individual who signed the document to which this certificate is attached, and not the truthfulness, accuracy, or validity of that document.
 
-State of ____________________, County of __________________.
+State of California, County of __________________.
 
 On ____________________ before me, ________________________________, personally appeared {{ full_name }}, who proved to me on the basis of satisfactory evidence to be the person whose name is subscribed to the within instrument and acknowledged to me that he/she executed the same in his/her authorized capacity, and that by his/her signature on the instrument the person, or the entity upon behalf of which the person acted, executed the instrument.
 
 I certify under PENALTY OF PERJURY under the laws of the State of California that the foregoing paragraph is true and correct.
 
 WITNESS my hand and official seal.
+
+
 _____________________________ (Signature of Notary Public)
+
 (Seal)
+
 {% endif %}
 {% if witness_1_name and witness_2_name %}
 

@@ -199,12 +199,14 @@ I designate {{ healthcare_agent_name }} ({{ healthcare_agent_relationship }}) as
 
 Phone: {{ healthcare_agent_phone }}
 Email: {{ healthcare_agent_email }}
+Address: {{ healthcare_agent_address }}
 
 {% if alternate_agent_name %}
 FIRST ALTERNATE HEALTHCARE AGENT:
 If {{ healthcare_agent_name }} is unable or unwilling to serve, I designate {{ alternate_agent_name }} ({{ alternate_agent_relationship }}) as my first alternate healthcare agent.
 Phone: {{ alternate_agent_phone }}
 Email: {{ alternate_agent_email }}
+Address: {{ alternate_agent_address }}
 {% endif %}
 
 {% if alternate_agent_2_name %}
@@ -212,6 +214,7 @@ SECOND ALTERNATE HEALTHCARE AGENT:
 If my primary and first alternate agents are unable or unwilling to serve, I designate {{ alternate_agent_2_name }} ({{ alternate_agent_2_relationship }}) as my second alternate healthcare agent.
 Phone: {{ alternate_agent_2_phone }}
 Email: {{ alternate_agent_2_email }}
+Address: {{ alternate_agent_2_address }}
 {% endif %}
 
 PART II: LIFE-SUSTAINING TREATMENT PREFERENCES

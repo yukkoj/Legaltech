@@ -417,6 +417,22 @@ class FormUtils {
         });
     }
 
+    static saveQuestionnaire() {
+        const formData = this.getFormData();
+        const jsonString = JSON.stringify(formData, null, 2);
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+
+        const element = document.createElement('a');
+        element.href = url;
+        element.download = `questionnaire_progress_${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+        URL.revokeObjectURL(url); // Clean up
+        alert('Your form progress has been saved as a JSON file.');
+    }
+
     static resetForm() {
         if (confirm('Are you sure you want to reset the entire form?')) {
             document.getElementById('questionnaireForm').reset();
@@ -552,6 +568,11 @@ function setupEventListeners() {
 
     document.getElementById('prevBtn').addEventListener('click', () => {
         TabManager.prev();
+    });
+
+    // Save button
+    document.getElementById('saveBtn').addEventListener('click', () => {
+        FormUtils.saveQuestionnaire();
     });
 
     // Reset button

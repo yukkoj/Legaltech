@@ -227,6 +227,7 @@ class PDFGenerator:
                 ('Relationship', questionnaire_data.get('healthcare_agent_relationship', 'N/A')),
                 ('Phone', questionnaire_data.get('healthcare_agent_phone', 'N/A')),
                 ('Email', questionnaire_data.get('healthcare_agent_email', 'N/A')),
+                ('Address', questionnaire_data.get('healthcare_agent_address', 'N/A')),
             ]
             
             story.extend(self._build_info_table(agent_info))
@@ -241,6 +242,7 @@ class PDFGenerator:
                     ('Relationship', questionnaire_data.get('alternate_agent_relationship', 'N/A')),
                     ('Phone', questionnaire_data.get('alternate_agent_phone', 'N/A')),
                     ('Email', questionnaire_data.get('alternate_agent_email', 'N/A')),
+                    ('Address', questionnaire_data.get('alternate_agent_address', 'N/A')),
                 ]
                 
                 story.extend(self._build_info_table(alt_agent_info))
@@ -255,6 +257,7 @@ class PDFGenerator:
                     ('Relationship', questionnaire_data.get('alternate_agent_2_relationship', 'N/A')),
                     ('Phone', questionnaire_data.get('alternate_agent_2_phone', 'N/A')),
                     ('Email', questionnaire_data.get('alternate_agent_2_email', 'N/A')),
+                    ('Address', questionnaire_data.get('alternate_agent_2_address', 'N/A')),
                 ]
                 
                 story.extend(self._build_info_table(alt_agent_2_info))
