@@ -32,24 +32,71 @@ Email: {{ alternate_agent_2_email }}
 {% endif %}
 
 PART II: LIFE-SUSTAINING TREATMENT PREFERENCES
+A. Cardiopulmonary Resuscitation (CPR)
+{% if want_cpr == 'yes' %}
+I request that cardiopulmonary resuscitation (CPR) be administered if my heart stops beating or I stop breathing.
+{% elif want_cpr == 'no' %}
+I do not want cardiopulmonary resuscitation (CPR). I wish for a natural death.
+{% elif want_cpr == 'only_if_recovery' %}
+I request CPR only if my medical team believes recovery to a meaningful quality of life is likely.
+{% else %}
+My preference regarding CPR is uncertain, and I leave this decision to my healthcare agent.
+{% endif %}
 
-A. Cardiopulmonary Resuscitation (CPR):
-I request CPR: {{ want_cpr | yesno }}
+B. Mechanical Ventilation
+{% if want_mechanical_ventilation == 'yes' %}
+I request the use of mechanical ventilation (a breathing machine) if I am unable to breathe on my own.
+{% elif want_mechanical_ventilation == 'no' %}
+I do not want to be placed on a mechanical ventilator.
+{% elif want_mechanical_ventilation == 'only_if_recovery' %}
+I request mechanical ventilation only as a temporary measure while it is determined if I can recover.
+{% else %}
+My preference regarding mechanical ventilation is uncertain, and I leave this decision to my healthcare agent.
+{% endif %}
 
-B. Mechanical Ventilation:
-I request mechanical ventilation (breathing machine): {{ want_mechanical_ventilation | yesno }}
+C. Artificial Feeding and Hydration
+{% if want_feeding_tube == 'yes' %}
+I request the use of a feeding tube for artificial nutrition and hydration if I am unable to eat or drink.
+{% elif want_feeding_tube == 'no' %}
+I do not want a feeding tube for artificial nutrition and hydration.
+{% elif want_feeding_tube == 'only_if_recovery' %}
+I request a feeding tube only if it is needed temporarily for my recovery.
+{% else %}
+My preference regarding a feeding tube is uncertain, and I leave this decision to my healthcare agent.
+{% endif %}
 
-C. Artificial Feeding and Hydration:
-I request feeding tube or artificial nutrition: {{ want_feeding_tube | yesno }}
+D. Dialysis
+{% if want_dialysis == 'yes' %}
+I request dialysis if my kidneys fail.
+{% elif want_dialysis == 'no' %}
+I do not want dialysis.
+{% elif want_dialysis == 'only_if_recovery' %}
+I request dialysis only as a temporary measure to aid in my recovery.
+{% else %}
+My preference regarding dialysis is uncertain, and I leave this decision to my healthcare agent.
+{% endif %}
 
-D. Dialysis:
-I request dialysis: {{ want_dialysis | yesno }}
+E. Antibiotics
+{% if want_antibiotics == 'yes' %}
+I request antibiotics to treat infections.
+{% elif want_antibiotics == 'no' %}
+I do not want antibiotics to prolong my life, but I accept them for comfort.
+{% elif want_antibiotics == 'only_if_recovery' %}
+I request antibiotics only if the infection is treatable and I am expected to recover.
+{% else %}
+My preference regarding antibiotics is uncertain, and I leave this decision to my healthcare agent.
+{% endif %}
 
-E. Antibiotics:
-I request antibiotics for infections: {{ want_antibiotics | yesno }}
-
-F. Blood Transfusions:
-I request blood transfusions: {{ want_blood_transfusions | yesno }}
+F. Blood Transfusions
+{% if want_blood_transfusions == 'yes' %}
+I request blood transfusions if needed.
+{% elif want_blood_transfusions == 'no' %}
+I do not want blood transfusions.
+{% elif want_blood_transfusions == 'only_if_recovery' %}
+I request blood transfusions only if they are necessary for my recovery from a temporary condition.
+{% else %}
+My preference regarding blood transfusions is uncertain, and I leave this decision to my healthcare agent.
+{% endif %}
 
 PART III: CONDITION-SPECIFIC INSTRUCTIONS
 
@@ -70,8 +117,17 @@ My preference: {{ condition_severe_dementia }}
 
 PART IV: PAIN MANAGEMENT
 
-I request that pain management and comfort be prioritized: {{ pain_management_priority | yesno }}
-I accept medications that may hasten death if necessary for comfort: {{ accept_medication_side_effects | yesno }}
+{% if pain_management_priority %}
+I direct that my comfort and pain management be prioritized, even if it might shorten my life.
+{% else %}
+While I want to be comfortable, I prioritize extending my life.
+{% endif %}
+
+{% if accept_medication_side_effects %}
+I am willing to accept medications that may have side effects or may hasten death if they are necessary for my comfort.
+{% else %}
+I am not willing to accept medications that may hasten death, even if they are for comfort.
+{% endif %}
 
 {% if personal_values %}
 PART V: PERSONAL VALUES AND BELIEFS
@@ -97,14 +153,21 @@ Cultural considerations: {{ cultural_considerations }}
 {% endif %}
 {% endif %}
 
-{% if want_organ_donation == 'yes' %}
+{% if want_organ_donation == 'yes' or want_tissue_donation == 'yes' %}
 PART VII: ORGAN AND TISSUE DONATION
 
-I wish to donate the following organs: {{ organ_donation_types | join_list }}
-I wish to donate tissue: {{ want_tissue_donation | yesno }}
-{% if tissue_donation_types %}
-Types: {{ tissue_donation_types | join_list }}
+{% if want_organ_donation == 'yes' %}
+I wish to donate my organs for transplant. The specific organs I wish to donate are: {{ organ_donation_types | join_list }}.
+{% else %}
+I do not wish to donate organs.
 {% endif %}
+
+{% if want_tissue_donation == 'yes' %}
+I wish to donate tissue for transplant. {% if tissue_donation_types %}The specific tissues are: {{ tissue_donation_types | join_list }}.{% else %}This includes skin, bone, and corneas as needed.{% endif %}
+{% else %}
+I do not wish to donate tissue.
+{% endif %}
+
 {% endif %}
 
 PART VIII: BODY DISPOSITION
