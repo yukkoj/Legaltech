@@ -185,9 +185,10 @@ ADVANCED_DIRECTIVE_TEMPLATE = '''
 {% set today = now() %}
 
 ADVANCE DIRECTIVE FOR HEALTH CARE
-STATE OF {{ state_of_residence | upper }}
+STATE OF CALIFORNIA
 
-I, {{ full_name }}, being of sound mind and at least eighteen (18) years of age, execute this Advance Directive for Health Care.
+I, {{ full_name }}, being of sound mind and at least eighteen (18) years of age, execute this Advance Directive for Health Care. 
+I revoke any prior advance directives I have made. This document reflects my healthcare preferences as of {{ today.strftime("%B %d, %Y") }}.
 
 PURPOSE:
 This document allows me to make known my wishes regarding my medical treatment if I become unable to communicate them. I have the right to refuse any medical treatment.
@@ -374,7 +375,7 @@ NOTARIZATION
 
 A notary public or other officer completing this certificate verifies only the identity of the individual who signed the document to which this certificate is attached, and not the truthfulness, accuracy, or validity of that document.
 
-State of ____________________, County of __________________.
+State of California, County of __________________.
 
 On ____________________ before me, ________________________________, personally appeared {{ full_name }}, who proved to me on the basis of satisfactory evidence to be the person whose name is subscribed to the within instrument and acknowledged to me that he/she executed the same in his/her authorized capacity, and that by his/her signature on the instrument the person, or the entity upon behalf of which the person acted, executed the instrument.
 

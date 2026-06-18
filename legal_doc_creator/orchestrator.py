@@ -1,6 +1,7 @@
 """Document processing orchestrator that coordinates between agents."""
 import os
 from typing import Optional
+import google.generativeai as genai
 from agents.drafting_agent import DraftingAgent
 from agents.editing_agent import EditingAgent
 from models.document import LegalDocument
@@ -12,8 +13,8 @@ class DocumentOrchestrator:
     def __init__(
         self,
         api_key: Optional[str] = None,
-        draft_model: str = "gpt-4",
-        edit_model: str = "gpt-4",
+        draft_model: str = "gemini-1.5-pro-latest",
+        edit_model: str = "gemini-1.5-pro-latest",
         draft_temp: float = 0.7,
         edit_temp: float = 0.5,
         num_edit_passes: int = 1
@@ -30,10 +31,12 @@ class DocumentOrchestrator:
             num_edit_passes: Number of editing passes to perform
         """
         if api_key is None:
-            api_key = os.getenv("OPENAI_API_KEY")
+            api_key = os.getenv("GOOGLE_API_KEY")
         
         if not api_key:
-            raise ValueError("OPENAI_API_KEY not provided and not found in environment")
+            raise ValueError("GOOGLE_API_KEY not provided and not found in environment")
+        
+        genai.configure(api_key=api_key)
         
         self.drafting_agent = DraftingAgent(api_key, draft_model, draft_temp)
         self.editing_agent = EditingAgent(api_key, edit_model, edit_temp)

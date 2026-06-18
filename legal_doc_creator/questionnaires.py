@@ -14,7 +14,7 @@ class AdvancedDirectiveQuestionnaire:
     # Personal Information
     full_name: str = ""
     date_of_birth: str = ""
-    state_of_residence: str = ""
+    state_of_residence: str = "California"
     
     # Healthcare Agent/Proxy
     healthcare_agent_name: str = ""
@@ -164,7 +164,8 @@ class AdvancedDirectiveQuestionnaireFlow:
         print("\n--- SECTION 1: PERSONAL INFORMATION ---\n")
         self.responses.full_name = input("Full Legal Name: ").strip()
         self.responses.date_of_birth = input("Date of Birth (MM/DD/YYYY): ").strip()
-        self.responses.state_of_residence = input("State of Residence: ").strip()
+        self.responses.state_of_residence = "California"
+        print("State of Residence: California (This form is for California residents)")
     
     def _collect_healthcare_agent(self):
         """Collect healthcare agent information"""
@@ -193,36 +194,25 @@ class AdvancedDirectiveQuestionnaireFlow:
         self.responses.alternate_agent_2_email = input("Email Address: ").strip()
     
     def _collect_signature_method(self):
-        """Collect signature preference, with special guidance for California."""
+        """Collect signature preference for California."""
         print("\n--- SECTION 2: DOCUMENT VALIDATION (SIGNATURES) ---\n")
         
-        is_california = self.responses.state_of_residence.lower() == 'california'
-        
-        if is_california:
-            print("In California, an Advanced Directive must be signed with either:")
-            print("  1. A notary public")
-            print("  2. Two qualified witnesses")
-            prompt = "\nHow would you like to validate your document? (Enter 1 or 2): "
-        else:
-            print("To make your document legally valid, it needs to be signed correctly.")
-            print("A notary is often recommended for interstate validity. Alternatively, you can use two witnesses.")
-            print("  1. Use a notary public")
-            print("  2. Use two witnesses")
-            prompt = "\nChoose a validation method (Enter 1 or 2): "
+        print("In California, an Advanced Directive must be signed with either:")
+        print("  1. A notary public")
+        print("  2. Two qualified witnesses")
+        prompt = "\nHow would you like to validate your document? (Enter 1 or 2): "
 
         while True:
             choice = input(prompt).strip()
             if choice == '1':
                 self.responses.signature_method = "notary"
                 self.responses.notary_required = True
-                print("\nYou have chosen to use a notary public. No witness information is needed.")
+                print("\nYou have chosen to use a notary public.")
                 break
             elif choice == '2':
                 self.responses.signature_method = "witnesses"
                 self.responses.notary_required = False
-                print("\nYou have chosen to use two witnesses. You will be asked for their details later.")
-                if not is_california and self._ask_yes_no("Do you want to add an optional notary section as well?"):
-                    self.responses.notary_required = True
+                print("\nYou have chosen to use two witnesses.")
                 break
             else:
                 print("Invalid choice. Please enter 1 or 2.")
@@ -364,17 +354,13 @@ class AdvancedDirectiveQuestionnaireFlow:
         ).strip()
     
     def _collect_witnesses(self):
-        """Collect witness information"""
+        """Collect witness information for California."""
         print("\n--- SECTION 7: WITNESSES ---\n")
-        print("Your document requires 2 witnesses. Witnesses generally cannot be:")
+        print("Your document requires 2 witnesses. In California, witnesses generally cannot be:")
         print("  - Your healthcare agent or alternate agent")
         print("  - Your healthcare provider or their employee")
         print("  - An operator or employee of a care facility where you live")
-        
-        if self.responses.state_of_residence.lower() == 'california':
-            print("  - For California, at least one witness must NOT be related to you or benefit from your estate.\n")
-        else:
-            print("  - Related to you by blood or marriage (check state laws)\n")
+        print("  - At least one witness must NOT be related to you or benefit from your estate.\n")
         
         self.responses.witness_1_name = input("Witness 1 Full Name: ").strip()
         self.responses.witness_1_phone = input("Witness 1 Phone Number: ").strip()

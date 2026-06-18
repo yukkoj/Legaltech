@@ -7,6 +7,12 @@ Does NOT touch the generated document
 from typing import Dict, List, Any, Tuple
 import logging
 from datetime import datetime
+import os
+import json
+try:
+    import google.generativeai as genai
+except ImportError:
+    genai = None
 
 logger = logging.getLogger(__name__)
 
@@ -17,9 +23,24 @@ class InputEditorAgent:
     Ensures data is complete, consistent, and high-quality.
     """
     
-    def __init__(self):
+    def __init__(self, api_key: Optional[str] = None):
         self.feedback = []
         self.suggestions = []
+        
+        if genai is None:
+            self.model = None
+            logger.warning("google-generativeai client not installed. Skipping LLM-based analysis.")
+            return
+            
+        if api_key is None:
+            api_key = os.getenv("GEMINI_API_KEY")
+        
+        if api_key:
+            genai.configure(api_key=api_key)
+            self.model = genai.GenerativeModel('gemini-3.5-flash')
+        else:
+            self.model = None
+            logger.warning("InputEditorAgent: No Gemini API key provided. LLM-based analysis will be skipped.")
     
     def review_input(self, questionnaire_data: Dict[str, Any], document_type: str = "advanced_directive") -> Dict[str, Any]:
         """
@@ -44,6 +65,10 @@ class InputEditorAgent:
         self._check_consistency(refined_data)
         self._check_clarity(refined_data)
         self._check_legal_validity(refined_data, document_type)
+        
+        # Add LLM-based analysis for free-text fields
+        if self.model:
+            self._analyze_free_text_with_llm(refined_data)
         
         is_ready = len(self.feedback) == 0  # Only issues block drafting, suggestions don't
         
@@ -222,6 +247,71 @@ class InputEditorAgent:
                 self.suggestions.append(
                     "💡 Providing both witnesses and notarization provides excellent protection for document validity."
                 )
+
+    def _analyze_free_text_with_llm(self, data: Dict[str, Any]):
+        """Use an LLM to analyze free-text fields for clarity and consistency."""
+        
+        if not self.model:
+            return
+
+        # Gather the free-text fields
+        free_text_data = {
+            "personal_values": data.get("personal_values", ""),
+            "quality_of_life_definition": data.get("quality_of_life_definition", ""),
+            "fears_and_concerns": data.get("fears_and_concerns", ""),
+            "other_instructions": data.get("other_instructions", "")
+        }
+        
+        # Only proceed if there is content to analyze
+        if not any(free_text_data.values()):
+            return
+
+        prompt = f"""
+        You are a helpful assistant reviewing a user's input for a legal document (an Advance Directive).
+        Analyze the following user-provided statements for potential issues.
+        
+        User Statements:
+        - What matters most to me: "{free_text_data['personal_values']}"
+        - What makes life not worth living: "{free_text_data['quality_of_life_definition']}"
+        - Main fears and concerns: "{free_text_data['fears_and_concerns']}"
+        - Other instructions: "{free_text_data['other_instructions']}"
+
+        Review these statements and identify:
+        1.  **Ambiguities**: Phrases that are unclear or could be interpreted in multiple ways.
+        2.  **Contradictions**: Statements that seem to conflict with each other.
+        3.  **Actionable Suggestions**: Gentle suggestions for how the user could make their wishes clearer.
+
+        Provide your feedback in a JSON format with two keys: "issues" and "suggestions".
+        - "issues" should be a list of strings for critical problems that might block drafting.
+        - "suggestions" should be a list of strings for helpful advice.
+        If there are no problems, return empty lists.
+        IMPORTANT: Your entire response must be a single valid JSON object.
+
+        Your JSON response:
+        """
+
+        try:
+            response = self.model.generate_content(
+                prompt,
+                generation_config=genai.types.GenerationConfig(
+                    response_mime_type="application/json",
+                    temperature=0.2
+                )
+            )
+            
+            llm_feedback = json.loads(response.text)
+
+            if llm_feedback.get("issues"):
+                for issue in llm_feedback["issues"]:
+                    self.feedback.append(f"❌ LLM REVIEW: {issue}")
+            
+            if llm_feedback.get("suggestions"):
+                for suggestion in llm_feedback["suggestions"]:
+                    self.suggestions.append(f"💡 LLM SUGGESTION: {suggestion}")
+
+        except Exception as e:
+            logger.error(f"LLM analysis failed in InputEditorAgent: {e}")
+            self.suggestions.append("⚠️ Could not perform LLM-based analysis of free-text fields.")
     
     def _is_valid_date_format(self, date_str: str) -> bool:
         """Check if date string is a valid date in YYYY-MM-DD format."""
