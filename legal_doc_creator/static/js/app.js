@@ -147,6 +147,29 @@ class DocumentAPI {
             };
         }
     }
+
+    static async saveQuestionnaire(formData) {
+        try {
+            const response = await fetch(`${API_BASE}/save-questionnaire`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error_message || `Save failed: ${response.status}`);
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error('Save questionnaire error:', error);
+            return {
+                status: 'error',
+                error_message: error.message
+            };
+        }
+    }
 }
 
 // Form Utilities
@@ -417,20 +440,18 @@ class FormUtils {
         });
     }
 
-    static saveQuestionnaire() {
+    static async saveQuestionnaire() {
         const formData = this.getFormData();
-        const jsonString = JSON.stringify(formData, null, 2);
-        const blob = new Blob([jsonString], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
+        
+        FormUtils.showLoading('Saving your progress to the server...');
+        const result = await DocumentAPI.saveQuestionnaire(formData);
+        FormUtils.hideLoading();
 
-        const element = document.createElement('a');
-        element.href = url;
-        element.download = `questionnaire_progress_${new Date().toISOString().split('T')[0]}.json`;
-        document.body.appendChild(element);
-        element.click();
-        document.body.removeChild(element);
-        URL.revokeObjectURL(url); // Clean up
-        alert('Your form progress has been saved as a JSON file.');
+        if (result.status === 'success') {
+            alert(`Your form progress has been saved to the server as ${result.filename}.`);
+        } else {
+            alert(`Error saving progress: ${result.error_message || 'Unknown error'}`);
+        }
     }
 
     static resetForm() {
@@ -571,8 +592,8 @@ function setupEventListeners() {
     });
 
     // Save button
-    document.getElementById('saveBtn').addEventListener('click', () => {
-        FormUtils.saveQuestionnaire();
+    document.getElementById('saveBtn').addEventListener('click', async () => {
+        await FormUtils.saveQuestionnaire();
     });
 
     // Reset button

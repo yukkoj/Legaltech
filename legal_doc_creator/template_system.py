@@ -49,7 +49,9 @@ class TemplateManager:
         """Render template with JSON data"""
         try:
             template = self.env.get_template(template_name)
-            return template.render(**data)
+            # Pass the dictionary itself as 'data' for dynamic access,
+            # and also unpack it for direct access to keys like 'full_name'.
+            return template.render(data=data, **data)
         except TemplateError as e:
             logger.error(f"Template error in {template_name}: {e}")
             raise
@@ -231,6 +233,7 @@ Email: {{ alternate_agent_2_email }}
 Address: {{ alternate_agent_2_address }}
 {% endif %}
 
+{% if want_cpr or want_mechanical_ventilation or want_feeding_tube or want_dialysis or want_antibiotics or want_blood_transfusions %}
 PART II: LIFE-SUSTAINING TREATMENT PREFERENCES
 A. Cardiopulmonary Resuscitation (CPR)
 {% if want_cpr == 'yes' %}
@@ -297,6 +300,7 @@ I request blood transfusions only if they are necessary for my recovery from a t
 {% else %}
 My preference regarding blood transfusions is uncertain, and I leave this decision to my healthcare agent.
 {% endif %}
+{% endif %}
 
 PART III: CONDITION-SPECIFIC INSTRUCTIONS
 
@@ -324,6 +328,7 @@ PART III: CONDITION-SPECIFIC INSTRUCTIONS
 {% endfor %}
 
 {# Render the grouped preferences if any conditions were selected #}
+{% if conditions_for_no or conditions_for_yes or conditions_for_recovery or conditions_for_uncertain %}
 {% if conditions_for_no %}
 I do NOT want life-sustaining treatment if:
 {% for condition in conditions_for_no %}
@@ -351,6 +356,7 @@ My preference is UNCERTAIN, and I leave the decision to my healthcare agent in t
 - {{ condition }}
 {% endfor %}
 {% endif %}
+{% endif %}
 
 PART IV: PAIN MANAGEMENT
 
@@ -366,21 +372,26 @@ I am willing to accept medications that may have side effects or may hasten deat
 I am not willing to accept medications that may hasten death, even if they are for comfort.
 {% endif %}
 
-{% if personal_values %}
+{% if personal_values or quality_of_life_definition or fears_and_concerns %}
 PART V: PERSONAL VALUES AND BELIEFS
 
+{% if personal_values %}
 What matters most to me: {{ personal_values }}
-
+{% endif %}
+{% if quality_of_life_definition %}
 Quality of life considerations: {{ quality_of_life_definition }}
-
+{% endif %}
+{% if fears_and_concerns %}
 My main concerns: {{ fears_and_concerns }}
 {% endif %}
+{% endif %}
 
-{% if religious_affiliation %}
+{% if religious_affiliation or religious_instructions or cultural_considerations %}
 PART VI: RELIGIOUS AND CULTURAL CONSIDERATIONS
 
+{% if religious_affiliation %}
 Religious affiliation: {{ religious_affiliation }}
-
+{% endif %}
 {% if religious_instructions %}
 Religious instructions: {{ religious_instructions }}
 {% endif %}
@@ -407,12 +418,15 @@ I do not wish to donate tissue.
 
 {% endif %}
 
+{% if body_disposition or specific_wishes_body %}
 PART VIII: BODY DISPOSITION
 
+{% if body_disposition %}
 Preference for my body: {{ body_disposition | replace('_', ' ') | capitalize_words }}
-
+{% endif %}
 {% if specific_wishes_body %}
 Special wishes: {{ specific_wishes_body }}
+{% endif %}
 {% endif %}
 
 PART IX: SIGNATURE AND VALIDATION

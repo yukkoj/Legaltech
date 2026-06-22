@@ -112,7 +112,7 @@ def generate_document():
         json_filename = f"questionnaire_{timestamp}.json"
         json_filepath = OUTPUT_DIR / json_filename
         
-        with open(json_filepath, 'w') as f:
+        with open(json_filepath, 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=2, default=str)
         
         logger.info(f"Questionnaire saved: {json_filepath}")
@@ -141,6 +141,37 @@ def generate_document():
     
     except Exception as e:
         logger.error(f"Document generation error: {e}")
+        return jsonify({
+            'status': 'error',
+            'error_message': str(e)
+        }), 500
+
+
+@app.route('/api/save-questionnaire', methods=['POST'])
+def save_questionnaire():
+    """
+    Save current questionnaire progress to a JSON file on the server.
+    """
+    try:
+        data = request.get_json()
+        
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        json_filename = f"questionnaire_progress_{timestamp}.json"
+        json_filepath = OUTPUT_DIR / json_filename
+        
+        with open(json_filepath, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=2, default=str)
+        
+        logger.info(f"Questionnaire progress saved: {json_filepath}")
+        
+        return jsonify({
+            'status': 'success',
+            'message': f'Progress saved to {json_filename} on the server.',
+            'filename': json_filename
+        })
+    
+    except Exception as e:
+        logger.error(f"Save questionnaire error: {e}")
         return jsonify({
             'status': 'error',
             'error_message': str(e)
