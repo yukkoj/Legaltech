@@ -2,12 +2,7 @@
   "organ_donation_types": [
     "all"
   ],
-  "organ_donation_purpose": [
-    "transplant",
-    "therapy",
-    "research",
-    "education"
-  ],
+  "organ_donation_purpose": [],
   "full_name": "Yukiko Kojima",
   "date_of_birth": "1976-10-04",
   "state_of_residence": "California",

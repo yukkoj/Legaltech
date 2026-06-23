@@ -62,7 +62,7 @@ class DraftingAgent:
                     'document_type': 'advanced_directive',
                     'status': 'success',
                     'template_used': 'advanced_directive.jinja2',
-                    'json_data_location': str(result['json_file']),
+                    'json_file': result.get('json_file'),
                     'data_quality_notes': result.get('validation_issues', [])
                 }
             else:

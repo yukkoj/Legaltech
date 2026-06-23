@@ -18,3 +18,4 @@ env/
 
 # Generated output files from the application
 legal_doc_creator/output/
+legal_doc_creator/legal_doc_creator/

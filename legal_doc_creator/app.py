@@ -96,17 +96,8 @@ def generate_document():
     """
     try:
         data = request.get_json()
-        # Step 1: Save questionnaire JSON
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        json_filename = f"questionnaire_{timestamp}.json"
-        json_filepath = OUTPUT_DIR / json_filename
         
-        with open(json_filepath, 'w', encoding='utf-8') as f:
-            json.dump(data, f, indent=2, default=str)
-        
-        logger.info(f"Questionnaire saved: {json_filepath}")
-        
-        # Step 2: Generate document
+        # Step 1: Generate document
         result = drafting_workflow.generate_from_questionnaire(
             data,
             document_type='advanced_directive',
@@ -119,12 +110,12 @@ def generate_document():
                 'error_message': result.get('error_message', 'Document generation failed')
             }), 500
         
-        # Step 3: Return success response
+        # Step 2: Return success response
         return jsonify({
             'status': 'success',
             'document': result.get('document'),
             'document_file': result.get('file_path'),
-            'questionnaire_file': str(json_filepath),
+            'questionnaire_file': result.get('json_file'),
             'message': 'Document generated successfully'
         })
     
@@ -235,8 +226,10 @@ def generate_pdf():
     """
     try:
         data = request.get_json()
+        logger.info(f"Received request to generate PDF with data: {data}")
         
         if not data or ('questionnaire_data' not in data and 'document_text' not in data):
+            logger.error("No questionnaire_data or document_text provided")
             return jsonify({
                 'status': 'error',
                 'error_message': 'No questionnaire_data or document_text provided'
@@ -250,6 +243,7 @@ def generate_pdf():
             questionnaire_data = data.get('questionnaire_data', {})
             full_name = questionnaire_data.get('full_name')
             
+            logger.info("Generating document text from questionnaire...")
             # Generate document text using the drafting workflow
             draft_result = drafting_workflow.generate_from_questionnaire(
                 questionnaire_data,
@@ -258,13 +252,16 @@ def generate_pdf():
             )
 
             if draft_result.get('status') != 'success':
+                logger.error(f"Failed to generate document text: {draft_result.get('error_message')}")
                 return jsonify({
                     'status': 'error',
                     'error_message': draft_result.get('error_message', 'Failed to generate document text for PDF conversion')
                 }), 500
             
             document_text = draft_result.get('document')
+            logger.info("Document text generated successfully.")
 
+        logger.info(f"Generating PDF from document text...")
         # Generate PDF from the final document text
         success, message, pdf_path = generate_pdf_from_document(
             document_text,
@@ -274,6 +271,7 @@ def generate_pdf():
         )
         
         if success:
+            logger.info(f"PDF generated successfully: {pdf_path}")
             return jsonify({
                 'status': 'success',
                 'pdf_file': Path(pdf_path).name,
@@ -281,13 +279,14 @@ def generate_pdf():
                 'message': message
             })
         else:
+            logger.error(f"PDF generation failed: {message}")
             return jsonify({
                 'status': 'error',
                 'error_message': message
             }), 500
     
     except Exception as e:
-        logger.error(f"PDF generation error: {e}")
+        logger.error(f"PDF generation error: {e}", exc_info=True)
         return jsonify({
             'status': 'error',
             'error_message': str(e)

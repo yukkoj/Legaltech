@@ -131,25 +131,24 @@ class PDFGenerator:
             return f"({digits[0:3]}) {digits[3:6]}-{digits[6:10]}"
         return s
     
-    def text_to_pdf(self, text_content: str, output_path: str, 
+    def text_to_pdf(self, text_content: str, output_path: str,
                    title: Optional[str] = None, full_name: Optional[str] = None) -> Tuple[bool, str]:
         """
-        Convert plain text document to a formatted PDF, preserving paragraphs.
-        
+        Convert plain text document to a formatted PDF, preserving paragraphs and line breaks.
+
         Args:
             text_content: The document text to convert
             output_path: Path where PDF should be saved
             title: Optional title for the document
             full_name: Name of the person for the footer
-        
+
         Returns:
             Tuple of (success: bool, message: str)
         """
         try:
-            # Create PDF document
             pdf_path = Path(output_path)
             pdf_path.parent.mkdir(parents=True, exist_ok=True)
-            
+
             doc = SimpleDocTemplate(
                 str(pdf_path),
                 pagesize=self.page_size,
@@ -158,52 +157,45 @@ class PDFGenerator:
                 topMargin=self.margin,
                 bottomMargin=self.margin
             )
-            
-            # Build story (content elements)
+
             story = []
-            
-            # Add title if provided
+
             if title:
                 story.append(Paragraph(title, self.styles['CustomTitle']))
                 story.append(Spacer(1, 0.2 * inch))
-            
-            # Split content into blocks based on one or more empty lines
-            # This preserves paragraphs.
-            blocks = re.split(r'\n\s*\n', text_content)
-            
-            for block in blocks:
-                # Sanitize block
-                clean_block = block.strip()
-                if not clean_block:
+
+            # Process content line by line to preserve formatting
+            lines = text_content.splitlines()
+            for line in lines:
+                clean_line = line.strip()
+
+                if not clean_line:
+                    # Preserve empty lines as spacers for paragraph breaks
+                    story.append(Spacer(1, 0.15 * inch))
                     continue
 
-                # Escape special characters for reportlab XML
-                safe_block = self._escape_special_chars(clean_block)
-                
-                # Check if the block is a heading (all caps and relatively short)
-                # The check for underscores handles signature lines.
-                if (safe_block.upper() == safe_block and not '_' in safe_block and len(safe_block.splitlines()) == 1):
-                    story.append(Paragraph(safe_block, self.styles['SectionHeading']))
-                elif '________________' in safe_block:
-                    # Handle signature lines specifically to avoid large gaps
-                    # Replace newlines with <br/> tags for manual line breaks
-                    story.append(Paragraph(safe_block.replace('\n', '<br/>'), self.styles['SignatureLine']))
+                # Use a new escape method before styling
+                safe_line = self._escape_special_chars(clean_line)
+
+                if (safe_line.isupper() and len(safe_line) < 80 and not '_' in safe_line):
+                    story.append(Paragraph(safe_line, self.styles['SectionHeading']))
+                elif '________________' in safe_line:
+                    story.append(Paragraph(safe_line.replace('_', '&#95;'), self.styles['SignatureLine']))
                 else:
-                    # Regular paragraph, replace newlines with <br/> to preserve them
-                    story.append(Paragraph(safe_block.replace('\n', '<br/>'), self.styles['CustomBody']))
-                
-                # Add a small spacer after each block for readability
-                story.append(Spacer(1, 0.1 * inch))
-            
-            # Set name for footer
+                    story.append(Paragraph(safe_line, self.styles['CustomBody']))
+
             self.full_name = full_name if full_name else ""
 
-            # Pass 1: Dummy build to get page count
-            doc.build(story)
+            # First pass to get page count
+            doc.build(story, onFirstPage=self._footer_canvas, onLaterPages=self._footer_canvas)
             self.page_count = doc.page
 
-            # Pass 2: Real build with footer
-            doc = SimpleDocTemplate(
+            # Re-build is not necessary as page count is now known for the footer
+            # The canvas object in the first build is sufficient.
+            # However, if the footer content depends on the total page count,
+            # a second pass is required. Let's stick with the two-pass build for safety.
+            
+            doc_with_footer = SimpleDocTemplate(
                 str(pdf_path),
                 pagesize=self.page_size,
                 rightMargin=self.margin,
@@ -211,13 +203,14 @@ class PDFGenerator:
                 topMargin=self.margin,
                 bottomMargin=self.margin
             )
-            doc.build(story, onFirstPage=self._footer_canvas, onLaterPages=self._footer_canvas)
-            
+            doc_with_footer.build(story, onFirstPage=self._footer_canvas, onLaterPages=self._footer_canvas)
+
+
             logger.info(f"PDF generated successfully: {pdf_path}")
             return True, f"PDF saved to {pdf_path}"
-        
+
         except Exception as e:
-            logger.error(f"Error generating PDF: {e}")
+            logger.error(f"Error generating PDF: {e}", exc_info=True)
             return False, f"Error generating PDF: {str(e)}"
 
     def _add_treatment_preference(self, story, data, key, title, texts):
