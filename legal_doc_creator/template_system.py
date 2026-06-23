@@ -128,15 +128,9 @@ class DraftingWorkflow:
             'draft': None
         }
         
-        # Step 1: Validate data quality
-        validation_issues = self._validate_data(questionnaire_data, document_type)
-        result['validation_issues'] = validation_issues
+        # The validation is now expected to be done by the InputEditorAgent before this workflow is called.
         
-        if validation_issues:
-            logger.warning(f"Data quality issues found: {validation_issues}")
-            # Don't block drafting, but flag for editor review
-        
-        # Step 2: Draft document using template
+        # Draft document using template
         try:
             template_name = f"{document_type}.jinja2"
             draft = self.template_manager.render_template(template_name, questionnaire_data)
@@ -147,40 +141,6 @@ class DraftingWorkflow:
         
         return result
     
-    def _validate_data(self, data: Dict[str, Any], document_type: str) -> list:
-        """Validate questionnaire data for completeness"""
-        issues = []
-        
-        # Define required fields by document type
-        required_by_type = {
-            'advanced_directive': [
-                'full_name', 'date_of_birth', 'state_of_residence',
-                'healthcare_agent_name', 'healthcare_agent_relationship',
-                'witness_1_name', 'witness_2_name'
-            ]
-        }
-        
-        # Define conditional requirements
-        conditionals = {
-            'advanced_directive': {
-                'want_organ_donation': ['organ_donation_types'],
-                'want_tissue_donation': ['tissue_donation_types']
-            }
-        }
-        
-        required_fields = required_by_type.get(document_type, [])
-        is_complete, missing = self.data_manager.validate_required_fields(data, required_fields)
-        if not is_complete:
-            issues.extend([f"Missing required field: {field}" for field in missing])
-        
-        conditional_reqs = conditionals.get(document_type, {})
-        is_conditional_ok, conditional_issues = self.data_manager.validate_conditional_fields(
-            data, conditional_reqs
-        )
-        if not is_conditional_ok:
-            issues.extend(conditional_issues)
-        
-        return issues
 
 
 # Example: Sample Advanced Directive Template

@@ -126,6 +126,7 @@ class InputEditorAgent:
                 self.feedback.append(
                     "❌ INCONSISTENT: Healthcare agent designated but no contact information (phone, email, or address) provided."
                 )
+        
         if data.get('alternate_agent_name'):
             if not (data.get('alternate_agent_phone') or data.get('alternate_agent_email') or data.get('alternate_agent_address')):
                 self.feedback.append(
@@ -136,13 +137,21 @@ class InputEditorAgent:
                 self.feedback.append(
                     "❌ INCONSISTENT: Second alternate agent is designated but no contact information (phone, email, or address) is provided."
                 )
-        
+        # If user wants agent to receive info, an agent must be designated
+        if data.get('right_not_to_know_preference') == 'agent_receives_info':
+            if not data.get('healthcare_agent_name', '').strip():
+                self.feedback.append(
+                    "❌ INCONSISTENT: You chose for your agent to receive health information, but no primary healthcare agent is designated."
+                )
+
         # If organ donation is yes, donation types should be specified
         if data.get('want_organ_donation') in ['yes', True]:
             if not data.get('organ_donation_types'):
                 self.suggestions.append(
                     "💡 If wanting organ donation, specify which organs (heart, lungs, etc.)"
                 )
+        
+
 
         # Agents must be unique individuals
         agent_name = data.get('healthcare_agent_name', '').lower().strip()

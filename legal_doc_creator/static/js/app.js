@@ -191,11 +191,6 @@ class FormUtils {
                 case 'organ_donation_purpose':
                     data['organ_donation_purpose'].push(value);
                     break;
-                case 'want_organ_donation':
-                case 'want_tissue_donation':
-                    // If these are present in formData, it means the checkbox was checked.
-                    data[key] = 'yes';
-                    break;
                 case 'pain_management_priority':
                 case 'accept_medication_side_effects':
                 case 'notary_required':
