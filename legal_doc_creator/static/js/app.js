@@ -405,7 +405,8 @@ class FormUtils {
             // Prepare payload for the API
             const payload = {
                 document_text: documentText,
-                title: 'Advanced Directive'
+                title: 'Advanced Directive',
+                full_name: currentQuestionnaireData ? currentQuestionnaireData.full_name : ''
             };
             
             // Generate PDF from the document text

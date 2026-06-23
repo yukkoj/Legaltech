@@ -41,6 +41,8 @@ class PDFGenerator:
         self.page_size = page_size
         self.margin = margin_inch * inch
         self.styles = self._setup_styles()
+        self.full_name = ""
+        self.page_count = 0
     
     def _setup_styles(self) -> dict:
         """Setup custom paragraph styles for professional formatting"""
@@ -101,6 +103,24 @@ class PDFGenerator:
         
         return styles
 
+    def _footer_canvas(self, canvas, doc):
+        """Draws the footer on each page."""
+        canvas.saveState()
+        canvas.setFont('Helvetica', 9)
+        page_num_text = f"Page {doc.page} of {self.page_count}"
+        
+        if self.full_name:
+            footer_text = f"{self.full_name} | {page_num_text}"
+        else:
+            footer_text = page_num_text
+        
+        # Calculate position for the footer
+        x = self.page_size[0] / 2
+        y = self.margin * 0.5  # Half an inch from the bottom
+        
+        canvas.drawCentredString(x, y, footer_text)
+        canvas.restoreState()
+
     @staticmethod
     def _format_phone(s: str) -> str:
         """Formats a 10-digit phone number string."""
@@ -112,7 +132,7 @@ class PDFGenerator:
         return s
     
     def text_to_pdf(self, text_content: str, output_path: str, 
-                   title: Optional[str] = None) -> Tuple[bool, str]:
+                   title: Optional[str] = None, full_name: Optional[str] = None) -> Tuple[bool, str]:
         """
         Convert plain text document to a formatted PDF, preserving paragraphs.
         
@@ -120,6 +140,7 @@ class PDFGenerator:
             text_content: The document text to convert
             output_path: Path where PDF should be saved
             title: Optional title for the document
+            full_name: Name of the person for the footer
         
         Returns:
             Tuple of (success: bool, message: str)
@@ -174,8 +195,23 @@ class PDFGenerator:
                 # Add a small spacer after each block for readability
                 story.append(Spacer(1, 0.1 * inch))
             
-            # Build PDF
+            # Set name for footer
+            self.full_name = full_name if full_name else ""
+
+            # Pass 1: Dummy build to get page count
             doc.build(story)
+            self.page_count = doc.page
+
+            # Pass 2: Real build with footer
+            doc = SimpleDocTemplate(
+                str(pdf_path),
+                pagesize=self.page_size,
+                rightMargin=self.margin,
+                leftMargin=self.margin,
+                topMargin=self.margin,
+                bottomMargin=self.margin
+            )
+            doc.build(story, onFirstPage=self._footer_canvas, onLaterPages=self._footer_canvas)
             
             logger.info(f"PDF generated successfully: {pdf_path}")
             return True, f"PDF saved to {pdf_path}"
@@ -348,8 +384,23 @@ class PDFGenerator:
             story.append(Paragraph('_' * 50, self.styles['SignatureLine']))
             story.append(Paragraph('Date', self.styles['CustomBody']))
             
-            # Build PDF
+            # Set name for footer
+            self.full_name = questionnaire_data.get('full_name', '')
+
+            # Pass 1: Dummy build to get page count
             doc.build(story)
+            self.page_count = doc.page
+
+            # Pass 2: Real build with footer
+            doc = SimpleDocTemplate(
+                str(pdf_path),
+                pagesize=self.page_size,
+                rightMargin=self.margin,
+                leftMargin=self.margin,
+                topMargin=self.margin,
+                bottomMargin=self.margin
+            )
+            doc.build(story, onFirstPage=self._footer_canvas, onLaterPages=self._footer_canvas)
             
             logger.info(f"PDF generated from questionnaire: {pdf_path}")
             return True, f"PDF saved to {pdf_path}"
@@ -413,7 +464,7 @@ class PDFGenerator:
 
 
 def generate_pdf_from_document(document_text: str, output_dir: Path, 
-                              title: str = "Advanced Directive") -> Tuple[bool, str, Optional[str]]:
+                              title: str = "Advanced Directive", full_name: Optional[str] = None) -> Tuple[bool, str, Optional[str]]:
     """
     Utility function to generate PDF from document text
     
@@ -421,6 +472,7 @@ def generate_pdf_from_document(document_text: str, output_dir: Path,
         document_text: The document content as text
         output_dir: Directory to save PDF
         title: Title for the PDF document
+        full_name: Name of the person for the footer
     
     Returns:
         Tuple of (success: bool, message: str, file_path: Optional[str])
@@ -436,7 +488,7 @@ def generate_pdf_from_document(document_text: str, output_dir: Path,
         
         # Generate PDF
         generator = PDFGenerator()
-        success, message = generator.text_to_pdf(document_text, str(pdf_path), title=title)
+        success, message = generator.text_to_pdf(document_text, str(pdf_path), title=title, full_name=full_name)
         
         if success:
             return True, message, str(pdf_path)

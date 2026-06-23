@@ -276,11 +276,13 @@ def generate_pdf():
             # Generate PDF from document text
             document_text = data['document_text']
             title = data.get('title', 'Advanced Directive')
+            full_name = data.get('full_name')
             
             success, message, pdf_path = generate_pdf_from_document(
                 document_text,
                 OUTPUT_DIR,
-                title=title
+                title=title,
+                full_name=full_name
             )
             
             if success:
