@@ -66,7 +66,7 @@ class TemplateManager:
 class JSONDataManager:
     """Manages questionnaire data as JSON"""
     
-    def __init__(self, output_dir: str = "output"):
+    def __init__(self, output_dir: str = "legal_doc_creator/output"):
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
     
@@ -325,10 +325,10 @@ PART III: CONDITION-SPECIFIC INSTRUCTIONS
 
 {# Populate the lists based on user choices #}
 {% for key, description in condition_map.items() %}
-    {% if data[key] == 'no' %}{% set _ = conditions_for_no.append(description) %}
-    {% elif data[key] == 'yes' %}{% set _ = conditions_for_yes.append(description) %}
-    {% elif data[key] == 'only_if_recovery' %}{% set _ = conditions_for_recovery.append(description) %}
-    {% elif data[key] == 'uncertain' %}{% set _ = conditions_for_uncertain.append(description) %}
+    {% if data.get(key) == 'no' %}{% set _ = conditions_for_no.append(description) %}
+    {% elif data.get(key) == 'yes' %}{% set _ = conditions_for_yes.append(description) %}
+    {% elif data.get(key) == 'only_if_recovery' %}{% set _ = conditions_for_recovery.append(description) %}
+    {% elif data.get(key) == 'uncertain' %}{% set _ = conditions_for_uncertain.append(description) %}
     {% endif %}
 {% endfor %}
 
