@@ -236,12 +236,11 @@ def generate_pdf():
             }), 400
 
         document_text = data.get("document_text")
-        full_name = None
+        questionnaire_data = data.get('questionnaire_data', {})
+        full_name = questionnaire_data.get('full_name')
 
         # If document_text is not provided, generate it from questionnaire_data
         if not document_text:
-            questionnaire_data = data.get('questionnaire_data', {})
-            full_name = questionnaire_data.get('full_name')
             
             logger.info("Generating document text from questionnaire...")
             # Generate document text using the drafting workflow

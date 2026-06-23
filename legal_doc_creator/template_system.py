@@ -383,12 +383,12 @@ My main concerns: {{ fears_and_concerns }}
 {% endif %}
 {% endif %}
 
-{% if right_not_to_know_preference and right_not_to_know_preference != 'none' %}
+{% if right_not_to_know_preference and right_not_to_know_preference|trim != 'none' %}
 PART VI: RIGHT NOT TO KNOW
 
-{% if right_not_to_know_preference == 'agent_receives_info' %}
+{% if right_not_to_know_preference|trim == 'agent_receives_info' %}
 I do not wish to be informed of my specific diagnosis/prognosis, and instead authorize my designated agent to receive and act upon this information.
-{% elif right_not_to_know_preference == 'waive_risk_info' %}
+{% elif right_not_to_know_preference|trim == 'waive_risk_info' %}
 I wish to be informed of my diagnosis, but I waive the right to be informed of the specific technical risks associated with the specific procedure.
 {% endif %}
 {% endif %}

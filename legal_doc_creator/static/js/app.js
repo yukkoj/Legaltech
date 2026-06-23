@@ -191,11 +191,15 @@ class FormUtils {
                 case 'organ_donation_purpose':
                     data['organ_donation_purpose'].push(value);
                     break;
+                case 'want_organ_donation':
+                case 'want_tissue_donation':
+                    // If these are present in formData, it means the checkbox was checked.
+                    data[key] = 'yes';
+                    break;
                 case 'pain_management_priority':
                 case 'accept_medication_side_effects':
                 case 'notary_required':
                 case 'use_witnesses':
-                case 'want_organ_donation':
                      data[key] = (value === 'true' || value === 'yes');
                      break;
                 default:
@@ -206,10 +210,18 @@ class FormUtils {
         }
         
         // Ensure boolean for checkboxes that might not be in formData if unchecked
-        const checkboxes = ['pain_management_priority', 'accept_medication_side_effects', 'notary_required', 'use_witnesses', 'want_organ_donation'];
+        const checkboxes = ['pain_management_priority', 'accept_medication_side_effects', 'notary_required', 'use_witnesses'];
         checkboxes.forEach(cb => {
             if (!data.hasOwnProperty(cb)) {
                 data[cb] = false;
+            }
+        });
+
+        // Handle "yes/no" checkboxes for donation
+        const yesNoCheckboxes = ['want_organ_donation', 'want_tissue_donation'];
+        yesNoCheckboxes.forEach(cb => {
+            if (!data.hasOwnProperty(cb)) {
+                data[cb] = 'no';
             }
         });
 
@@ -425,12 +437,7 @@ class FormUtils {
             if (pdfResult.status === 'success') {
                 // Download the PDF file
                 const pdfFilename = pdfResult.pdf_file;
-                const link = document.createElement('a');
-                link.href = `${API_BASE}/download-pdf/${pdfFilename}`;
-                link.download = pdfFilename;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+                window.location.href = `${API_BASE}/download-pdf/${pdfFilename}`;
             } else {
                 alert(`Error generating PDF: ${pdfResult.error_message || 'Unknown error'}`);
             }

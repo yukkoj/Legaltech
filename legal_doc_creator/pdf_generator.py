@@ -164,25 +164,24 @@ class PDFGenerator:
                 story.append(Paragraph(title, self.styles['CustomTitle']))
                 story.append(Spacer(1, 0.2 * inch))
 
-            # Process content line by line to preserve formatting
-            lines = text_content.splitlines()
-            for line in lines:
-                clean_line = line.strip()
+            # Process content by splitting into paragraphs based on blank lines
+            text_paragraphs = re.split(r'\n\s*\n', text_content)
 
-                if not clean_line:
-                    # Preserve empty lines as spacers for paragraph breaks
-                    story.append(Spacer(1, 0.15 * inch))
+            for para in text_paragraphs:
+                clean_para = para.strip()
+                if not clean_para:
                     continue
 
-                # Use a new escape method before styling
-                safe_line = self._escape_special_chars(clean_line)
+                safe_para = self._escape_special_chars(clean_para)
 
-                if (safe_line.isupper() and len(safe_line) < 80 and not '_' in safe_line):
-                    story.append(Paragraph(safe_line, self.styles['SectionHeading']))
-                elif '________________' in safe_line:
-                    story.append(Paragraph(safe_line.replace('_', '&#95;'), self.styles['SignatureLine']))
+                # Heuristic for identifying headings (single line, all caps)
+                if (safe_para.isupper() and len(safe_para.splitlines()) == 1 and len(safe_para) < 80 and not '_' in safe_para):
+                    story.append(Paragraph(safe_para, self.styles['SectionHeading']))
+                elif '________________' in safe_para:
+                    story.append(Paragraph(safe_para.replace('_', '&#95;'), self.styles['SignatureLine']))
                 else:
-                    story.append(Paragraph(safe_line, self.styles['CustomBody']))
+                    # Preserve line breaks within a paragraph by replacing them with <br/>
+                    story.append(Paragraph(safe_para.replace('\n', '<br/>'), self.styles['CustomBody']))
 
             self.full_name = full_name if full_name else ""
 
@@ -313,5 +312,3 @@ def generate_pdf_from_document(document_text: str, output_dir: Path,
     except Exception as e:
         logger.error(f"Error in generate_pdf_from_document: {e}")
         return False, f"Error: {str(e)}", None
-
-
