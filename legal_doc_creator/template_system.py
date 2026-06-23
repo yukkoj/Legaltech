@@ -205,6 +205,11 @@ I revoke any prior advance directives I have made. This document reflects my hea
 PURPOSE:
 This document allows me to make known my wishes regarding my medical treatment if I become unable to communicate them. I have the right to refuse any medical treatment.
 
+My agent's authority becomes effective only when my primary physician determines that I lack the capacity to make my own health care decisions.
+
+My agent should follow my known wishes. If my wishes are unclear or a situation is not specifically covered in this document, my agent should decide based on my values, comfort, and best interests.
+
+
 PART I: DESIGNATION OF HEALTHCARE AGENT
 
 I designate {{ healthcare_agent_name }} ({{ healthcare_agent_relationship }}) as my healthcare agent to make medical decisions on my behalf if I am unable to do so.
@@ -401,6 +406,9 @@ PART VII: ORGAN AND TISSUE DONATION
 
 {% if want_organ_donation == 'yes' %}
 I wish to donate my organs for transplant. The specific organs I wish to donate are: {{ organ_donation_types | join_list }}.
+{% if organ_donation_purpose %}
+My organs may be used for the following purposes: {{ organ_donation_purpose | join_list | capitalize_words }}.
+{% endif %}
 {% else %}
 I do not wish to donate organs.
 {% endif %}

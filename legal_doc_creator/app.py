@@ -96,18 +96,7 @@ def generate_document():
     """
     try:
         data = request.get_json()
-        
-        # Step 1: Validate input
-        review_result = input_editor_workflow.editor.review_input(data, 'advanced_directive')
-        
-        if not review_result['is_ready_to_draft']:
-            return jsonify({
-                'status': 'validation_failed',
-                'issues': review_result['issues_found'],
-                'suggestions': review_result['suggestions']
-            }), 400
-        
-        # Step 2: Save questionnaire JSON
+        # Step 1: Save questionnaire JSON
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         json_filename = f"questionnaire_{timestamp}.json"
         json_filepath = OUTPUT_DIR / json_filename
@@ -117,7 +106,7 @@ def generate_document():
         
         logger.info(f"Questionnaire saved: {json_filepath}")
         
-        # Step 3: Generate document
+        # Step 2: Generate document
         result = drafting_workflow.generate_from_questionnaire(
             data,
             document_type='advanced_directive',
@@ -130,7 +119,7 @@ def generate_document():
                 'error_message': result.get('error_message', 'Document generation failed')
             }), 500
         
-        # Step 4: Return success response
+        # Step 3: Return success response
         return jsonify({
             'status': 'success',
             'document': result.get('document'),
@@ -247,62 +236,34 @@ def generate_pdf():
     try:
         data = request.get_json()
         
-        # Determine what to convert to PDF
-        if 'questionnaire_data' in data and data['questionnaire_data']:
-            # Generate PDF from questionnaire
-            questionnaire_data = data['questionnaire_data']
-            document_type = data.get('document_type', 'advanced_directive')
-            
-            success, message, pdf_path = generate_pdf_from_questionnaire(
-                questionnaire_data,
-                OUTPUT_DIR,
-                document_type=document_type
-            )
-            
-            if success:
-                return jsonify({
-                    'status': 'success',
-                    'pdf_file': Path(pdf_path).name,
-                    'pdf_path': str(pdf_path),
-                    'message': message
-                })
-            else:
-                return jsonify({
-                    'status': 'error',
-                    'error_message': message
-                }), 500
+        if not data or 'questionnaire_data' not in data:
+            return jsonify({
+                'status': 'error',
+                'error_message': 'No questionnaire_data provided'
+            }), 400
+
+        # Generate PDF from questionnaire data
+        questionnaire_data = data['questionnaire_data']
+        document_type = data.get('document_type', 'advanced_directive')
         
-        elif 'document_text' in data and data['document_text']:
-            # Generate PDF from document text
-            document_text = data['document_text']
-            title = data.get('title', 'Advanced Directive')
-            full_name = data.get('full_name')
-            
-            success, message, pdf_path = generate_pdf_from_document(
-                document_text,
-                OUTPUT_DIR,
-                title=title,
-                full_name=full_name
-            )
-            
-            if success:
-                return jsonify({
-                    'status': 'success',
-                    'pdf_file': Path(pdf_path).name,
-                    'pdf_path': str(pdf_path),
-                    'message': message
-                })
-            else:
-                return jsonify({
-                    'status': 'error',
-                    'error_message': message
-                }), 500
+        success, message, pdf_path = generate_pdf_from_questionnaire(
+            questionnaire_data,
+            OUTPUT_DIR,
+            document_type=document_type
+        )
         
+        if success:
+            return jsonify({
+                'status': 'success',
+                'pdf_file': Path(pdf_path).name,
+                'pdf_path': str(pdf_path),
+                'message': message
+            })
         else:
             return jsonify({
                 'status': 'error',
-                'error_message': 'No questionnaire_data or document_text provided'
-            }), 400
+                'error_message': message
+            }), 500
     
     except Exception as e:
         logger.error(f"PDF generation error: {e}")

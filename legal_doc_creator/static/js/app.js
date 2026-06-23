@@ -6,7 +6,6 @@
 const API_BASE = '/api';
 let currentTab = 'personal';
 const allTabs = ['personal', 'healthcare', 'treatment', 'values', 'witnesses', 'review'];
-let isValidated = false;
 let generatedDocument = null;
 let currentQuestionnaireData = null;
 
@@ -183,13 +182,20 @@ class FormUtils {
         for (let [key, value] of formData.entries()) {
             if (key === 'organ_types' || key === 'want_organ_donation') {
                 // Handle organ donation types
+            if (key === 'organ_types') {
                 if (!data['organ_donation_types']) {
                     data['organ_donation_types'] = [];
                 }
                 if (key === 'organ_types' && value) {
                     data['organ_donation_types'].push(value);
+                data['organ_donation_types'].push(value);
+            } else if (key === 'organ_donation_purpose') {
+                if (!data['organ_donation_purpose']) {
+                    data['organ_donation_purpose'] = [];
                 }
             } else if (key.startsWith('want_') || key === 'notary_required' || key === 'pain_management_priority' || key === 'accept_medication_side_effects') {
+                data['organ_donation_purpose'].push(value);
+            } else if (key.startsWith('want_') || key === 'notary_required' || key === 'pain_management_priority' || key === 'accept_medication_side_effects' || key === 'use_witnesses') {
                 // Convert checkbox/radio boolean values
                 if (value === 'true') {
                     data[key] = true;
@@ -394,19 +400,17 @@ class FormUtils {
         FormUtils.showLoading('Generating PDF...');
         
         try {
-            // Use the generated document text from the preview
-            if (!generatedDocument || !generatedDocument.document) {
-                alert('Please generate a document first before downloading the PDF.');
+            // Use the questionnaire data that's currently loaded in the form
+            if (!currentQuestionnaireData) {
+                alert('No questionnaire data found. Please fill out the form or load a saved file.');
                 FormUtils.hideLoading();
                 return;
             }
-            const documentText = generatedDocument.document;
             
             // Prepare payload for the API
             const payload = {
-                document_text: documentText,
-                title: 'Advanced Directive',
-                full_name: currentQuestionnaireData ? currentQuestionnaireData.full_name : ''
+                questionnaire_data: currentQuestionnaireData,
+                document_type: 'advanced_directive'
             };
             
             // Generate PDF from the document text
@@ -458,7 +462,6 @@ class FormUtils {
     static resetForm() {
         if (confirm('Are you sure you want to reset the entire form?')) {
             document.getElementById('questionnaireForm').reset();
-            isValidated = false;
             document.getElementById('generationResults').style.display = 'none';
             document.getElementById('validationResults').innerHTML = '';
             TabManager.show('personal');
@@ -472,6 +475,7 @@ class FormUtils {
 
         // Reset conditional fields that reset() might not handle perfectly
         document.getElementById('organDonationTypes').style.display = 'none';
+        document.getElementById('organDonationPurpose').style.display = 'none';
 
         for (const key in data) {
             if (!data.hasOwnProperty(key)) continue;
@@ -484,6 +488,11 @@ class FormUtils {
                 if (key === 'organ_donation_types' && Array.isArray(value)) {
                     value.forEach(organ => {
                         const checkbox = form.querySelector(`input[name="organ_types"][value="${organ}"]`);
+                        if (checkbox) checkbox.checked = true;
+                    });
+                } else if (key === 'organ_donation_purpose' && Array.isArray(value)) {
+                    value.forEach(purpose => {
+                        const checkbox = form.querySelector(`input[name="organ_donation_purpose"][value="${purpose}"]`);
                         if (checkbox) checkbox.checked = true;
                     });
                 }
@@ -610,10 +619,6 @@ function setupEventListeners() {
         FormUtils.hideLoading();
 
         FormUtils.displayValidationResults(results);
-        isValidated = results.is_valid;
-
-        // Enable generate button if validated
-        document.getElementById('generateBtn').disabled = !isValidated;
     });
 
     // Generate button
@@ -631,10 +636,13 @@ function setupEventListeners() {
     if (organCheckbox) {
         organCheckbox.addEventListener('change', (e) => {
             const typesDiv = document.getElementById('organDonationTypes');
+            const purposeDiv = document.getElementById('organDonationPurpose');
             if (e.target.checked) {
                 typesDiv.style.display = 'block';
+                purposeDiv.style.display = 'block';
             } else {
                 typesDiv.style.display = 'none';
+                purposeDiv.style.display = 'none';
             }
         });
     }

@@ -329,6 +329,14 @@
                         <label><input type="checkbox" name="organ_types" value="pancreas"> Pancreas</label>
                     </div>
 
+                    <div id="organDonationPurpose" class="conditional-group" style="display:none;">
+                        <p>For what purposes may your organs be used?</p>
+                        <label><input type="checkbox" name="organ_donation_purpose" value="transplant"> For transplant</label>
+                        <label><input type="checkbox" name="organ_donation_purpose" value="therapy"> For therapy</label>
+                        <label><input type="checkbox" name="organ_donation_purpose" value="research"> For research</label>
+                        <label><input type="checkbox" name="organ_donation_purpose" value="education"> For education</label>
+                    </div>
+
                     <hr class="divider">
                     <h3 style="margin-top: 20px;">Body Disposition</h3>
                     <p class="section-info">Indicate your preferences for your body after death.</p>
@@ -411,7 +419,7 @@
                         <button type="button" id="validateBtn" class="btn btn-secondary">
                             Validate Input
                         </button>
-                        <button type="button" id="generateBtn" class="btn btn-primary" disabled>
+                        <button type="button" id="generateBtn" class="btn btn-primary">
                             Generate Document
                         </button>
                     </div>

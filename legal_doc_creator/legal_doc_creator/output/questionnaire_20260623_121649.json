@@ -21,7 +21,7 @@
   "want_mechanical_ventilation": "no",
   "want_feeding_tube": "no",
   "want_dialysis": "no",
-  "want_blood_transfusions": "no",
+  "want_blood_transfusions": "only_if_recovery",
   "want_antibiotics": "only_if_recovery",
   "condition_permanently_unconscious": "no",
   "condition_terminal_illness": "no",
@@ -30,11 +30,9 @@
   "pain_management_priority": true,
   "accept_medication_side_effects": true,
   "personal_values": "I wish to maintain my ability to make decisions (necessary for daily life), communicate (both verbally and in writing), and perform basic self-care (walking, eating, and hygiene) without any assistance.",
-  "quality_of_life_definition": "If I lose these core abilities due to a permanent physical or mental disability, I would consider my independence lost. Further more, if I cannot engage in meaningful activities or experience joy through engaging in conversation and hobbies, I consider it not worth living.",
-  "fears_and_concerns": "Being in pain, unable to take care of myself without the aid of others.",
-  "religious_affiliation": "None",
-  "religious_instructions": "None",
-  "cultural_considerations": "None",
+  "quality_of_life_definition": "If I lose these core abilities due to a permanent physical or mental disability, I would consider my independence lost. Furthermore, if I cannot engage in meaningful activities or experience joy through engaging in conversation and hobbies, I consider it not worth living.",
+  "fears_and_concerns": "Being in pain, unable to take care of myself without the aid of others. I do not want life prolonging treatments.",
+  "right_not_to_know_preference": "none",
   "organ_donation_types": [
     "all"
   ],

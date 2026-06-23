@@ -62,6 +62,7 @@ class AdvancedDirectiveQuestionnaire:
     # Organ/Tissue Donation
     want_organ_donation: str = ""  # "yes", "no", "uncertain"
     organ_donation_types: List[str] = None  # ["all","heart", "lungs", "kidney", "liver"]
+    organ_donation_purpose: List[str] = None # e.g., ["transplant", "therapy", "research", "education"]
     
     # Tissue Donation
     want_tissue_donation: str = ""  # "yes", "no", "uncertain"
@@ -105,6 +106,8 @@ class AdvancedDirectiveQuestionnaire:
         # Convert lists to strings for storage if needed
         if self.organ_donation_types:
             data['organ_donation_types'] = ", ".join(self.organ_donation_types)
+        if self.organ_donation_purpose:
+            data['organ_donation_purpose'] = ", ".join(self.organ_donation_purpose)
         if self.tissue_donation_types:
             data['tissue_donation_types'] = ", ".join(self.tissue_donation_types)
         return data
@@ -288,6 +291,13 @@ class AdvancedDirectiveQuestionnaireFlow:
                     if self._ask_yes_no(f"  {organ}?"):
                         organs.append(organ.lower())
             self.responses.organ_donation_types = organs
+
+            print("\nFor what purposes may your organs be used?")
+            purposes = []
+            for purpose in ["Transplant", "Therapy", "Research", "Education"]:
+                if self._ask_yes_no(f"  {purpose}?"):
+                    purposes.append(purpose.lower())
+            self.responses.organ_donation_purpose = purposes
         else:
             self.responses.want_organ_donation = "no"
         
