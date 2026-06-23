@@ -312,6 +312,26 @@
                         </div>
                     </div>
 
+                    <hr class="divider">
+                    <h3 style="margin-top: 20px;">Body Disposition</h3>
+                    <p class="section-info">Indicate your preferences for your body after death.</p>
+
+                    <div class="treatment-group">
+                        <p class="treatment-question">What is your preference?</p>
+                        <div class="radio-group">
+                            <label><input type="radio" name="body_disposition" value="burial"> Burial</label>
+                            <label><input type="radio" name="body_disposition" value="cremation"> Cremation</label>
+                            <label><input type="radio" name="body_disposition" value="donation_to_science"> Donation to Science</label>
+                            <label><input type="radio" name="body_disposition" value="no_preference"> No Preference</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="specificWishesBody">Specific Wishes for Body Disposition</label>
+                        <textarea id="specificWishesBody" name="specific_wishes_body" rows="3" placeholder="e.g., Specific location for burial, instructions for ashes..."></textarea>
+                    </div>
+
+                    <h3 style="margin-top: 20px;">Organ and Tissue Donation</h3>
                     <div class="checkbox-group">
                         <label>
                             <input type="checkbox" name="want_organ_donation" value="yes">
@@ -335,25 +355,10 @@
                         <label><input type="checkbox" name="organ_donation_purpose" value="therapy"> For therapy</label>
                         <label><input type="checkbox" name="organ_donation_purpose" value="research"> For research</label>
                         <label><input type="checkbox" name="organ_donation_purpose" value="education"> For education</label>
-                    </div>
-
-                    <hr class="divider">
-                    <h3 style="margin-top: 20px;">Body Disposition</h3>
-                    <p class="section-info">Indicate your preferences for your body after death.</p>
-
-                    <div class="treatment-group">
-                        <p class="treatment-question">What is your preference?</p>
-                        <div class="radio-group">
-                            <label><input type="radio" name="body_disposition" value="burial"> Burial</label>
-                            <label><input type="radio" name="body_disposition" value="cremation"> Cremation</label>
-                            <label><input type="radio" name="body_disposition" value="donation_to_science"> Donation to Science</label>
-                            <label><input type="radio" name="body_disposition" value="no_preference"> No Preference</label>
+                        <div class="form-group" style="margin-top: 10px;">
+                            <label for="organ_donation_purpose_details">Additional specifications for organ donation purpose (e.g., for education about a specific condition):</label>
+                            <textarea id="organ_donation_purpose_details" name="organ_donation_purpose_details" rows="2" placeholder="Add any specific wishes here..."></textarea>
                         </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="specificWishesBody">Specific Wishes for Body Disposition</label>
-                        <textarea id="specificWishesBody" name="specific_wishes_body" rows="3" placeholder="e.g., Specific location for burial, instructions for ashes..."></textarea>
                     </div>
                 </div>
 

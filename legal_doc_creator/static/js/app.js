@@ -178,36 +178,40 @@ class FormUtils {
         const formData = new FormData(form);
         const data = {};
 
+        // Initialize arrays for checkbox groups
+        data['organ_donation_types'] = [];
+        data['organ_donation_purpose'] = [];
+
         // Convert FormData to object
         for (let [key, value] of formData.entries()) {
-            if (key === 'organ_types' || key === 'want_organ_donation') {
-                // Handle organ donation types
-            if (key === 'organ_types') {
-                if (!data['organ_donation_types']) {
-                    data['organ_donation_types'] = [];
-                }
-                if (key === 'organ_types' && value) {
+            switch (key) {
+                case 'organ_types':
                     data['organ_donation_types'].push(value);
-                data['organ_donation_types'].push(value);
-            } else if (key === 'organ_donation_purpose') {
-                if (!data['organ_donation_purpose']) {
-                    data['organ_donation_purpose'] = [];
-                }
-            } else if (key.startsWith('want_') || key === 'notary_required' || key === 'pain_management_priority' || key === 'accept_medication_side_effects') {
-                data['organ_donation_purpose'].push(value);
-            } else if (key.startsWith('want_') || key === 'notary_required' || key === 'pain_management_priority' || key === 'accept_medication_side_effects' || key === 'use_witnesses') {
-                // Convert checkbox/radio boolean values
-                if (value === 'true') {
-                    data[key] = true;
-                } else if (value === 'false') {
-                    data[key] = false;
-                } else {
+                    break;
+                case 'organ_donation_purpose':
+                    data['organ_donation_purpose'].push(value);
+                    break;
+                case 'pain_management_priority':
+                case 'accept_medication_side_effects':
+                case 'notary_required':
+                case 'use_witnesses':
+                case 'want_organ_donation':
+                     data[key] = (value === 'true' || value === 'yes');
+                     break;
+                default:
+                    // For radio buttons or other fields, the last value wins, which is correct.
                     data[key] = value;
-                }
-            } else {
-                data[key] = value;
+                    break;
             }
         }
+        
+        // Ensure boolean for checkboxes that might not be in formData if unchecked
+        const checkboxes = ['pain_management_priority', 'accept_medication_side_effects', 'notary_required', 'use_witnesses', 'want_organ_donation'];
+        checkboxes.forEach(cb => {
+            if (!data.hasOwnProperty(cb)) {
+                data[cb] = false;
+            }
+        });
 
         return data;
     }

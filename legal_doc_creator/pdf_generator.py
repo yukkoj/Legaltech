@@ -318,18 +318,26 @@ class PDFGenerator:
                 elif data.get('right_not_to_know_preference') == 'waive_risk_info':
                     story.append(Paragraph('I wish to be informed of my diagnosis, but I waive the right to be informed of the specific technical risks associated with the specific procedure.', self.styles['CustomBody']))
 
-            # --- PART VII: ORGAN DONATION ---
+            # --- PART VII: BODY DISPOSITION ---
+            if data.get('body_disposition') or data.get('specific_wishes_body'):
+                story.append(Paragraph('PART VII: BODY DISPOSITION', self.styles['SectionHeading']))
+                if data.get('body_disposition'): story.append(Paragraph(f"Preference for my body: {data.get('body_disposition').replace('_', ' ').title()}", self.styles['CustomBody']))
+                if data.get('specific_wishes_body'): story.append(Paragraph(f"Special wishes: {self._escape_special_chars(data.get('specific_wishes_body'))}", self.styles['CustomBody']))
+
+            # --- PART VIII: ORGAN DONATION ---
             if data.get('want_organ_donation') == 'yes' or data.get('want_tissue_donation') == 'yes':
-                story.append(Paragraph('PART VII: ORGAN AND TISSUE DONATION', self.styles['SectionHeading']))
+                story.append(Paragraph('PART VIII: ORGAN AND TISSUE DONATION', self.styles['SectionHeading']))
                 if data.get('want_organ_donation') == 'yes':
                     organs = ", ".join(data.get('organ_donation_types', []))
                     story.append(Paragraph(f"I wish to donate my organs for transplant. The specific organs I wish to donate are: {organs}.", self.styles['CustomBody']))
-
-            # --- PART VIII: BODY DISPOSITION ---
-            if data.get('body_disposition') or data.get('specific_wishes_body'):
-                story.append(Paragraph('PART VIII: BODY DISPOSITION', self.styles['SectionHeading']))
-                if data.get('body_disposition'): story.append(Paragraph(f"Preference for my body: {data.get('body_disposition').replace('_', ' ').title()}", self.styles['CustomBody']))
-                if data.get('specific_wishes_body'): story.append(Paragraph(f"Special wishes: {self._escape_special_chars(data.get('specific_wishes_body'))}", self.styles['CustomBody']))
+                    
+                    purposes = data.get('organ_donation_purpose', [])
+                    if purposes:
+                        story.append(Paragraph(f"My organs may be used for the following purposes: {', '.join(purposes).title()}", self.styles['CustomBody']))
+                    
+                    if data.get('organ_donation_purpose_details'):
+                        details = self._escape_special_chars(data.get('organ_donation_purpose_details'))
+                        story.append(Paragraph(f"Additional specifications: {details}", self.styles['CustomBody']))
 
             # --- PART IX: SIGNATURE AND VALIDATION ---
             story.append(Paragraph('PART IX: SIGNATURE AND VALIDATION', self.styles['SectionHeading']))

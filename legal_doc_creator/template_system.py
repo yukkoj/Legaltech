@@ -409,6 +409,9 @@ I wish to donate my organs for transplant. The specific organs I wish to donate 
 {% if organ_donation_purpose %}
 My organs may be used for the following purposes: {{ organ_donation_purpose | join_list | capitalize_words }}.
 {% endif %}
+{% if organ_donation_purpose_details %}
+Additional specifications: {{ organ_donation_purpose_details }}
+{% endif %}
 {% else %}
 I do not wish to donate organs.
 {% endif %}
