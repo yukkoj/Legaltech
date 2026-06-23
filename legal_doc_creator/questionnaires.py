@@ -70,12 +70,7 @@ class AdvancedDirectiveQuestionnaire:
     # Body Disposition
     body_disposition: str = ""  # "burial", "cremation", "donation_to_science", "no_preference"
     specific_wishes_body: str = ""
-    
-    # Religious/Cultural Considerations
-    religious_affiliation: str = ""
-    religious_instructions: str = ""
-    cultural_considerations: str = ""
-    
+       
     # Mental Health Preferences
     psychiatric_medications_preference: str = ""  # "continue", "discontinue", "case_by_case"
     mental_health_instructions: str = ""
@@ -87,7 +82,10 @@ class AdvancedDirectiveQuestionnaire:
     
     # Additional Instructions
     other_instructions: str = ""
-    
+
+    # Right Not to Know
+    right_not_to_know_preference: str = "" # "none", "agent_receives_info", "waive_risk_info"
+
     # Witnesses/Notarization
     witness_1_name: str = ""
     witness_1_phone: str = ""
@@ -334,13 +332,6 @@ class AdvancedDirectiveQuestionnaireFlow:
         """Collect personal values and life preferences"""
         print("\n--- SECTION 6: PERSONAL VALUES & BELIEFS ---\n")
         
-        self.responses.religious_affiliation = input("Religious affiliation (if any): ").strip()
-        
-        if self.responses.religious_affiliation:
-            self.responses.religious_instructions = input(
-                "Any religious instructions or practices important to your care? "
-            ).strip()
-        
         self.responses.cultural_considerations = input(
             "Any cultural considerations important to you? "
         ).strip()
@@ -360,6 +351,27 @@ class AdvancedDirectiveQuestionnaireFlow:
         self.responses.other_instructions = input(
             "\nAny other instructions or wishes? (optional): "
         ).strip()
+
+        print("\n--- RIGHT NOT TO KNOW ---\n")
+        print("You have the right not to be informed about certain aspects of your medical condition.")
+        print("Please choose one of the following options:")
+        print("  1. I want to be fully informed of everything.")
+        print("  2. I do not wish to be informed of my specific diagnosis/prognosis, and instead authorize my designated agent to receive and act upon this information.")
+        print("  3. I wish to be informed of my diagnosis, but I waive the right to be informed of the specific technical risks associated with the specific procedure.")
+        
+        while True:
+            choice = input("\nEnter your choice (1-3): ").strip()
+            if choice == '1':
+                self.responses.right_not_to_know_preference = "none"
+                break
+            elif choice == '2':
+                self.responses.right_not_to_know_preference = "agent_receives_info"
+                break
+            elif choice == '3':
+                self.responses.right_not_to_know_preference = "waive_risk_info"
+                break
+            else:
+                print("Invalid choice. Please enter 1, 2, or 3.")
     
     def _collect_witnesses(self):
         """Collect witness information for California."""

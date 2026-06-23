@@ -386,23 +386,18 @@ My main concerns: {{ fears_and_concerns }}
 {% endif %}
 {% endif %}
 
-{% if religious_affiliation or religious_instructions or cultural_considerations %}
-PART VI: RELIGIOUS AND CULTURAL CONSIDERATIONS
+{% if right_not_to_know_preference and right_not_to_know_preference != 'none' %}
+PART VI: RIGHT NOT TO KNOW
 
-{% if religious_affiliation %}
-Religious affiliation: {{ religious_affiliation }}
-{% endif %}
-{% if religious_instructions %}
-Religious instructions: {{ religious_instructions }}
-{% endif %}
-
-{% if cultural_considerations %}
-Cultural considerations: {{ cultural_considerations }}
+{% if right_not_to_know_preference == 'agent_receives_info' %}
+I do not wish to be informed of my specific diagnosis/prognosis, and instead authorize my designated agent to receive and act upon this information.
+{% elif right_not_to_know_preference == 'waive_risk_info' %}
+I wish to be informed of my diagnosis, but I waive the right to be informed of the specific technical risks associated with the specific procedure.
 {% endif %}
 {% endif %}
 
 {% if want_organ_donation == 'yes' or want_tissue_donation == 'yes' %}
-PART VII: ORGAN AND TISSUE DONATION
+PART VIII: ORGAN AND TISSUE DONATION
 
 {% if want_organ_donation == 'yes' %}
 I wish to donate my organs for transplant. The specific organs I wish to donate are: {{ organ_donation_types | join_list }}.
@@ -419,7 +414,7 @@ I do not wish to donate tissue.
 {% endif %}
 
 {% if body_disposition or specific_wishes_body %}
-PART VIII: BODY DISPOSITION
+PART IX: BODY DISPOSITION
 
 {% if body_disposition %}
 Preference for my body: {{ body_disposition | replace('_', ' ') | capitalize_words }}
@@ -429,7 +424,7 @@ Special wishes: {{ specific_wishes_body }}
 {% endif %}
 {% endif %}
 
-PART IX: SIGNATURE AND VALIDATION
+PART X: SIGNATURE AND VALIDATION
 
 I acknowledge this is my wishes regarding health care and authorize my healthcare agent to act according to this document.
 

@@ -292,6 +292,26 @@
                         <textarea id="fears" name="fears_and_concerns" rows="3" placeholder="e.g., Being in pain, being a burden, dying alone..."></textarea>
                     </div>
 
+                    <hr class="divider">
+                    <h3 style="margin-top: 20px;">Right Not to Know</h3>
+                    <p class="section-info">You can choose not to be told certain information about your health.</p>
+                    <div class="form-group">
+                        <div class="radio-group-vertical">
+                            <label class="radio-label">
+                                <input type="radio" name="right_not_to_know_preference" value="none" checked>
+                                <span>I wish to be fully informed of my diagnosis, prognosis, and treatment options.</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="right_not_to_know_preference" value="agent_receives_info">
+                                <span>I do not wish to be informed of my specific diagnosis/prognosis, and instead authorize my designated agent to receive and act upon this information.</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="right_not_to_know_preference" value="waive_risk_info">
+                                <span>I wish to be informed of my diagnosis, but I waive the right to be informed of the specific technical risks associated with the specific procedure.</span>
+                            </label>
+                        </div>
+                    </div>
+
                     <div class="checkbox-group">
                         <label>
                             <input type="checkbox" name="want_organ_donation" value="yes">
@@ -301,12 +321,12 @@
 
                     <div id="organDonationTypes" class="conditional-group" style="display:none;">
                         <p>Which organs would you like to donate?</p>
+                        <label><input type="checkbox" name="organ_types" value="all"> All organs</label>
                         <label><input type="checkbox" name="organ_types" value="heart"> Heart</label>
                         <label><input type="checkbox" name="organ_types" value="lungs"> Lungs</label>
                         <label><input type="checkbox" name="organ_types" value="liver"> Liver</label>
                         <label><input type="checkbox" name="organ_types" value="kidneys"> Kidneys</label>
                         <label><input type="checkbox" name="organ_types" value="pancreas"> Pancreas</label>
-                        <label><input type="checkbox" name="organ_types" value="all"> All organs</label>
                     </div>
 
                     <hr class="divider">
