@@ -116,36 +116,22 @@ class DraftingAgent:
         Args:
             document_text: The rendered document
             filename: Output filename (without extension)
-            output_format: 'txt', 'md', 'docx', 'pdf'
+            output_format: 'txt', 'md', 'docx'
         
         Returns:
             Path to saved file
         """
         from pathlib import Path
         
-        output_dir = Path('output')
+        output_dir = Path('legal_doc_creator/output')
         output_dir.mkdir(parents=True, exist_ok=True)
         
         if output_format == 'txt':
             filepath = output_dir / f"{filename}.txt"
-            filepath.write_text(document_text)
+            filepath.write_text(document_text, encoding='utf-8')
         elif output_format == 'md':
             filepath = output_dir / f"{filename}.md"
-            filepath.write_text(document_text)
-        elif output_format == 'pdf':
-            from reportlab.platypus import SimpleDocTemplate, Paragraph
-            from reportlab.lib.styles import getSampleStyleSheet
-            from reportlab.lib.units import inch
-
-            filepath = output_dir / f"{filename}.pdf"
-            doc = SimpleDocTemplate(str(filepath), rightMargin=inch, leftMargin=inch, topMargin=inch, bottomMargin=inch)
-            styles = getSampleStyleSheet()
-            story = []
-            for line in document_text.split('\n'):
-                # Use a non-breaking space for empty lines to preserve spacing
-                p = Paragraph(line if line.strip() else '&nbsp;', styles['Normal'])
-                story.append(p)
-            doc.build(story)
+            filepath.write_text(document_text, encoding='utf-8')
         else:
             raise NotImplementedError(f"Format '{output_format}' not yet supported")
         
@@ -194,7 +180,7 @@ class RefinedDraftingWorkflow:
                 filepath = self.drafting_agent.save_document(
                     result['document'],
                     f"{document_type}_draft",
-                    output_format='pdf'
+                    output_format='txt'
                 )
                 result['file_path'] = filepath
                 messages.append(f"✅ Saved to: {filepath}")

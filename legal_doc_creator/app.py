@@ -14,12 +14,12 @@ try:
     from input_editor_agent import InputEditorWorkflow
     from drafting_agent import RefinedDraftingWorkflow
     from template_system import setup_example_template
-    from pdf_generator import generate_pdf_from_document, generate_pdf_from_questionnaire
+    from pdf_generator import generate_pdf_from_document
 except ImportError:
     from legal_doc_creator.input_editor_agent import InputEditorWorkflow
     from legal_doc_creator.drafting_agent import RefinedDraftingWorkflow
     from legal_doc_creator.template_system import setup_example_template
-    from legal_doc_creator.pdf_generator import generate_pdf_from_document, generate_pdf_from_questionnaire
+    from legal_doc_creator.pdf_generator import generate_pdf_from_document
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -236,20 +236,41 @@ def generate_pdf():
     try:
         data = request.get_json()
         
-        if not data or 'questionnaire_data' not in data:
+        if not data or ('questionnaire_data' not in data and 'document_text' not in data):
             return jsonify({
                 'status': 'error',
-                'error_message': 'No questionnaire_data provided'
+                'error_message': 'No questionnaire_data or document_text provided'
             }), 400
 
-        # Generate PDF from questionnaire data
-        questionnaire_data = data['questionnaire_data']
-        document_type = data.get('document_type', 'advanced_directive')
-        
-        success, message, pdf_path = generate_pdf_from_questionnaire(
-            questionnaire_data,
+        document_text = data.get("document_text")
+        full_name = None
+
+        # If document_text is not provided, generate it from questionnaire_data
+        if not document_text:
+            questionnaire_data = data.get('questionnaire_data', {})
+            full_name = questionnaire_data.get('full_name')
+            
+            # Generate document text using the drafting workflow
+            draft_result = drafting_workflow.generate_from_questionnaire(
+                questionnaire_data,
+                document_type=data.get('document_type', 'advanced_directive'),
+                save_to_file=False  # We just need the text
+            )
+
+            if draft_result.get('status') != 'success':
+                return jsonify({
+                    'status': 'error',
+                    'error_message': draft_result.get('error_message', 'Failed to generate document text for PDF conversion')
+                }), 500
+            
+            document_text = draft_result.get('document')
+
+        # Generate PDF from the final document text
+        success, message, pdf_path = generate_pdf_from_document(
+            document_text,
             OUTPUT_DIR,
-            document_type=document_type
+            title=data.get('document_type', 'advanced_directive').replace('_', ' ').title(),
+            full_name=full_name
         )
         
         if success:
