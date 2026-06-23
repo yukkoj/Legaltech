@@ -397,7 +397,7 @@ I wish to be informed of my diagnosis, but I waive the right to be informed of t
 {% endif %}
 
 {% if want_organ_donation == 'yes' or want_tissue_donation == 'yes' %}
-PART VIII: ORGAN AND TISSUE DONATION
+PART VII: ORGAN AND TISSUE DONATION
 
 {% if want_organ_donation == 'yes' %}
 I wish to donate my organs for transplant. The specific organs I wish to donate are: {{ organ_donation_types | join_list }}.
@@ -414,7 +414,7 @@ I do not wish to donate tissue.
 {% endif %}
 
 {% if body_disposition or specific_wishes_body %}
-PART IX: BODY DISPOSITION
+PART VIII: BODY DISPOSITION
 
 {% if body_disposition %}
 Preference for my body: {{ body_disposition | replace('_', ' ') | capitalize_words }}
@@ -424,7 +424,7 @@ Special wishes: {{ specific_wishes_body }}
 {% endif %}
 {% endif %}
 
-PART X: SIGNATURE AND VALIDATION
+PART IX: SIGNATURE AND VALIDATION
 
 I acknowledge this is my wishes regarding health care and authorize my healthcare agent to act according to this document.
 
