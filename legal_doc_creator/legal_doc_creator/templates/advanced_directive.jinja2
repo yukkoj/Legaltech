@@ -46,6 +46,7 @@ Address: {{ alternate_agent_2_address }}
 
 {% if want_cpr or want_mechanical_ventilation or want_feeding_tube or want_dialysis or want_antibiotics or want_blood_transfusions %}
 PART II: LIFE-SUSTAINING TREATMENT PREFERENCES
+
 A. Cardiopulmonary Resuscitation (CPR)
 {% if want_cpr == 'yes' %}
 I request that cardiopulmonary resuscitation (CPR) be administered if my heart stops beating or I stop breathing.
@@ -116,27 +117,27 @@ My preference regarding blood transfusions is uncertain, and I leave this decisi
 PART III: CONDITION-SPECIFIC INSTRUCTIONS
 
 {# Initialize lists to group conditions by preference #}
-{% set conditions_for_no = [] %}
-{% set conditions_for_yes = [] %}
-{% set conditions_for_recovery = [] %}
-{% set conditions_for_uncertain = [] %}
+{%- set conditions_for_no = [] -%}
+{%- set conditions_for_yes = [] -%}
+{%- set conditions_for_recovery = [] -%}
+{%- set conditions_for_uncertain = [] -%}
 
 {# Helper dictionary to map condition keys to their descriptions #}
-{% set condition_map = {
+{%- set condition_map = {
     'condition_permanently_unconscious': 'I am permanently unconscious (e.g., a persistent vegetative state).',
     'condition_terminal_illness': 'I am diagnosed with a terminal illness.',
     'condition_severe_dementia': 'I am diagnosed with severe dementia or another irreversible cognitive condition.',
     'condition_other_incurable': 'I am diagnosed with another incurable condition.'
-} %}
+} -%}
 
 {# Populate the lists based on user choices #}
-{% for key, description in condition_map.items() %}
-    {% if data.get(key) == 'no' %}{% set _ = conditions_for_no.append(description) %}
-    {% elif data.get(key) == 'yes' %}{% set _ = conditions_for_yes.append(description) %}
-    {% elif data.get(key) == 'only_if_recovery' %}{% set _ = conditions_for_recovery.append(description) %}
-    {% elif data.get(key) == 'uncertain' %}{% set _ = conditions_for_uncertain.append(description) %}
-    {% endif %}
-{% endfor %}
+{%- for key, description in condition_map.items() -%}
+    {%- if data.get(key) == 'no' %}{% set _ = conditions_for_no.append(description) %}
+    {%- elif data.get(key) == 'yes' %}{% set _ = conditions_for_yes.append(description) %}
+    {%- elif data.get(key) == 'only_if_recovery' %}{% set _ = conditions_for_recovery.append(description) %}
+    {%- elif data.get(key) == 'uncertain' %}{% set _ = conditions_for_uncertain.append(description) %}
+    {%- endif -%}
+{%- endfor %}
 
 {# Render the grouped preferences if any conditions were selected #}
 {% if conditions_for_no or conditions_for_yes or conditions_for_recovery or conditions_for_uncertain %}
@@ -194,14 +195,14 @@ My main concerns: {{ fears_and_concerns }}
 {% endif %}
 {% endif %}
 
-{% if data.get('right_not_to_know_preference') and data.get('right_not_to_know_preference')|trim != 'none' %}
 PART VI: RIGHT NOT TO KNOW
 
 {% if data.get('right_not_to_know_preference')|trim == 'agent_receives_info' %}
 I do not wish to be informed of my specific diagnosis/prognosis, and instead authorize my designated agent to receive and act upon this information.
 {% elif data.get('right_not_to_know_preference')|trim == 'waive_risk_info' %}
 I wish to be informed of my diagnosis, but I waive the right to be informed of the specific technical risks associated with the specific procedure.
-{% endif %}
+{% else %}
+I wish to be fully informed of my medical condition, diagnosis, prognosis, and the risks and benefits of proposed treatments.
 {% endif %}
 
 {% if want_organ_donation == 'yes' or want_tissue_donation == 'yes' %}
@@ -236,6 +237,7 @@ Preference for my body: {{ body_disposition | replace('_', ' ') | capitalize_wor
 {% if specific_wishes_body %}
 Special wishes: {{ specific_wishes_body }}
 {% endif %}
+I authorize my healthcare agent named in Part I to carry out these instructions regarding my remains.
 {% endif %}
 
 PART IX: SIGNATURE AND VALIDATION
@@ -244,6 +246,7 @@ I acknowledge this is my wishes regarding health care and authorize my healthcar
 
 _____________________________
 {{ full_name }}
+
 Date: _______________
 {% if notary_required %}
 

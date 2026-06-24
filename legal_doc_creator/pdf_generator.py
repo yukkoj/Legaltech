@@ -65,12 +65,13 @@ class PDFGenerator:
             parent=styles['Heading2'],
             fontSize=12,
             textColor=colors.HexColor('#003366'),
-            spaceAfter=10,
-            spaceBefore=10,
+            spaceAfter=15,
+            spaceBefore=35,
             fontName='Helvetica-Bold',
             borderColor=colors.HexColor('#CCCCCC'),
             borderWidth=0.5,
-            borderPadding=5
+            borderPadding=5,
+            keepWithNext=True
         ))
         
         # Body text style
@@ -180,7 +181,7 @@ class PDFGenerator:
                 if (safe_para.isupper() and len(safe_para.splitlines()) == 1 and len(safe_para) < 80 and not '_' in safe_para):
                     story.append(Paragraph(safe_para, self.styles['SectionHeading']))
                 elif '________________' in safe_para:
-                    story.append(Paragraph(safe_para.replace('_', '&#95;'), self.styles['SignatureLine']))
+                    story.append(Paragraph(safe_para.replace('_', '&#95;').replace('\n', '<br/>'), self.styles['SignatureLine']))
                 else:
                     # Preserve line breaks within a paragraph by replacing them with <br/>
                     story.append(Paragraph(safe_para.replace('\n', '<br/>'), self.styles['CustomBody']))
@@ -197,7 +198,8 @@ class PDFGenerator:
             # This is a standard reportlab pattern.
             # Pass 1: Render the document to determine the total number of pages.
             # The output of this pass is incorrect (footer shows "Page X of 0"), but it gives us the page count.
-            doc.build(story, onFirstPage=self._footer_canvas, onLaterPages=self._footer_canvas)
+            import copy
+            doc.build(copy.deepcopy(story), onFirstPage=self._footer_canvas, onLaterPages=self._footer_canvas)
             self.page_count = doc.page # Get the page count from the first pass
 
             # Pass 2: Render the document again to the same file.

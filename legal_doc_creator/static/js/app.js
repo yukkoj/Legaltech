@@ -449,12 +449,18 @@ class FormUtils {
     static async saveQuestionnaire() {
         const formData = this.getFormData();
         
-        FormUtils.showLoading('Saving your progress to the server...');
+        FormUtils.showLoading('Saving your progress...');
         const result = await DocumentAPI.saveQuestionnaire(formData);
         FormUtils.hideLoading();
 
         if (result.status === 'success') {
-            alert(`Your form progress has been saved to the server as ${result.filename}.`);
+            const link = document.createElement('a');
+            link.href = `${API_BASE}/download/json/${result.filename}`;
+            link.download = result.filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            alert(`Your form progress has been saved and downloaded as ${result.filename}.`);
         } else {
             alert(`Error saving progress: ${result.error_message || 'Unknown error'}`);
         }
