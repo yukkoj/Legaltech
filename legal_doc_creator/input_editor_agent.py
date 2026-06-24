@@ -281,10 +281,10 @@ class InputEditorAgent:
         Analyze the following user-provided statements for potential issues.
         
         User Statements:
-        - What matters most to me: "{free_text_data['personal_values']}"
-        - What makes life not worth living: "{free_text_data['quality_of_life_definition']}"
-        - Main fears and concerns: "{free_text_data['fears_and_concerns']}"
-        - Other instructions: "{free_text_data['other_instructions']}"
+        - "What matters most to you in life?": "{free_text_data['personal_values']}"
+        - "What would make life not worth living for you?": "{free_text_data['quality_of_life_definition']}"
+        - "What are your main fears or concerns about end-of-life care?": "{free_text_data['fears_and_concerns']}"
+        - "Any other instructions or wishes?": "{free_text_data['other_instructions']}"
 
         Review these statements and identify:
         1.  **Ambiguities**: Phrases that are unclear or could be interpreted in multiple ways (e.g., "be comfortable").

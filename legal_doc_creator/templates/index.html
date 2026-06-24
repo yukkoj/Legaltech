@@ -292,6 +292,11 @@
                         <textarea id="fears" name="fears_and_concerns" rows="3" placeholder="e.g., Being in pain, being a burden, dying alone..."></textarea>
                     </div>
 
+                    <div class="form-group">
+                        <label for="otherInstructions">Any other instructions or wishes?</label>
+                        <textarea id="otherInstructions" name="other_instructions" rows="3" placeholder="Add any other specific instructions for your agent or medical team."></textarea>
+                    </div>
+
                     <hr class="divider">
                     <h3 style="margin-top: 20px;">Right Not to Know</h3>
                     <p class="section-info">You can choose not to be told certain information about your health.</p>
@@ -359,6 +364,24 @@
                             <label for="organ_donation_purpose_details">Additional specifications for organ donation purpose (e.g., for education about a specific condition):</label>
                             <textarea id="organ_donation_purpose_details" name="organ_donation_purpose_details" rows="2" placeholder="Add any specific wishes here..."></textarea>
                         </div>
+                    </div>
+
+                    <hr class="divider">
+
+                    <div class="checkbox-group">
+                        <label>
+                            <input type="checkbox" name="want_tissue_donation" value="yes">
+                            I wish to donate tissue (e.g., skin, bone, corneas)
+                        </label>
+                    </div>
+
+                    <div id="tissueDonationTypes" class="conditional-group" style="display:none;">
+                        <p>Which tissues would you like to donate?</p>
+                        <label><input type="checkbox" name="tissue_donation_types" value="all"> All tissues</label>
+                        <label><input type="checkbox" name="tissue_donation_types" value="skin"> Skin</label>
+                        <label><input type="checkbox" name="tissue_donation_types" value="bone"> Bone</label>
+                        <label><input type="checkbox" name="tissue_donation_types" value="corneas"> Corneas</label>
+                        <label><input type="checkbox" name="tissue_donation_types" value="heart_valves"> Heart Valves</label>
                     </div>
                 </div>
 

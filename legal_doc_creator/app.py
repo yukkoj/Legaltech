@@ -8,6 +8,7 @@ from pathlib import Path
 import json
 import logging
 from datetime import datetime
+from dotenv import load_dotenv
 
 # Import internal modules
 try:
@@ -20,6 +21,9 @@ except ImportError:
     from legal_doc_creator.drafting_agent import RefinedDraftingWorkflow
     from legal_doc_creator.template_system import setup_example_template
     from legal_doc_creator.pdf_generator import generate_pdf_from_document
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)

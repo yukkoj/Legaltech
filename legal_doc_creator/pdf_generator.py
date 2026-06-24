@@ -163,6 +163,8 @@ class PDFGenerator:
             if title:
                 story.append(Paragraph(title, self.styles['CustomTitle']))
                 story.append(Spacer(1, 0.2 * inch))
+            
+            initial_story_len = len(story)
 
             # Process content by splitting into paragraphs based on blank lines
             text_paragraphs = re.split(r'\n\s*\n', text_content)
@@ -183,18 +185,25 @@ class PDFGenerator:
                     # Preserve line breaks within a paragraph by replacing them with <br/>
                     story.append(Paragraph(safe_para.replace('\n', '<br/>'), self.styles['CustomBody']))
 
+            # Fallback mechanism: If parsing failed to add content, add the whole text as one block.
+            if len(story) == initial_story_len and text_content and text_content.strip():
+                logger.warning("PDF parsing logic did not add any content. Adding entire text as a single block.")
+                escaped_text = self._escape_special_chars(text_content).replace('\n', '<br/>')
+                story.append(Paragraph(escaped_text, self.styles['CustomBody']))
+
             self.full_name = full_name if full_name else ""
 
-            # First pass to get page count
+            # --- Two-Pass Build for "Page X of Y" Footer ---
+            # This is a standard reportlab pattern.
+            # Pass 1: Render the document to determine the total number of pages.
+            # The output of this pass is incorrect (footer shows "Page X of 0"), but it gives us the page count.
             doc.build(story, onFirstPage=self._footer_canvas, onLaterPages=self._footer_canvas)
-            self.page_count = doc.page
+            self.page_count = doc.page # Get the page count from the first pass
 
-            # Re-build is not necessary as page count is now known for the footer
-            # The canvas object in the first build is sufficient.
-            # However, if the footer content depends on the total page count,
-            # a second pass is required. Let's stick with the two-pass build for safety.
-            
-            doc_with_footer = SimpleDocTemplate(
+            # Pass 2: Render the document again to the same file.
+            # This time, `self.page_count` is correct, so the footer will be "Page X of Y".
+            # This overwrites the file created in Pass 1.
+            doc = SimpleDocTemplate(
                 str(pdf_path),
                 pagesize=self.page_size,
                 rightMargin=self.margin,
@@ -202,8 +211,7 @@ class PDFGenerator:
                 topMargin=self.margin,
                 bottomMargin=self.margin
             )
-            doc_with_footer.build(story, onFirstPage=self._footer_canvas, onLaterPages=self._footer_canvas)
-
+            doc.build(story, onFirstPage=self._footer_canvas, onLaterPages=self._footer_canvas)
 
             logger.info(f"PDF generated successfully: {pdf_path}")
             return True, f"PDF saved to {pdf_path}"

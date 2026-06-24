@@ -292,21 +292,18 @@ I do NOT want life-sustaining treatment if:
 - {{ condition }}
 {% endfor %}
 {% endif %}
-
 {% if conditions_for_yes %}
 I WANT life-sustaining treatment if:
 {% for condition in conditions_for_yes %}
 - {{ condition }}
 {% endfor %}
 {% endif %}
-
 {% if conditions_for_recovery %}
 I want life-sustaining treatment ONLY IF my medical team believes recovery to a meaningful quality of life is likely, in the following situations:
 {% for condition in conditions_for_recovery %}
 - {{ condition }}
 {% endfor %}
 {% endif %}
-
 {% if conditions_for_uncertain %}
 My preference is UNCERTAIN, and I leave the decision to my healthcare agent in the following situations:
 {% for condition in conditions_for_uncertain %}
@@ -343,12 +340,12 @@ My main concerns: {{ fears_and_concerns }}
 {% endif %}
 {% endif %}
 
-{% if right_not_to_know_preference and right_not_to_know_preference|trim != 'none' %}
+{% if data.get('right_not_to_know_preference') and data.get('right_not_to_know_preference')|trim != 'none' %}
 PART VI: RIGHT NOT TO KNOW
 
-{% if right_not_to_know_preference|trim == 'agent_receives_info' %}
+{% if data.get('right_not_to_know_preference')|trim == 'agent_receives_info' %}
 I do not wish to be informed of my specific diagnosis/prognosis, and instead authorize my designated agent to receive and act upon this information.
-{% elif right_not_to_know_preference|trim == 'waive_risk_info' %}
+{% elif data.get('right_not_to_know_preference')|trim == 'waive_risk_info' %}
 I wish to be informed of my diagnosis, but I waive the right to be informed of the specific technical risks associated with the specific procedure.
 {% endif %}
 {% endif %}

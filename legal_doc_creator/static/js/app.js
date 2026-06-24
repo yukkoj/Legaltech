@@ -178,43 +178,32 @@ class FormUtils {
         const formData = new FormData(form);
         const data = {};
 
-        // Initialize arrays for checkbox groups
-        data['organ_donation_types'] = [];
-        data['organ_donation_purpose'] = [];
+        // --- 1. Collect all data from the form ---
+        // Use `getAll` for fields that can have multiple values (checkbox groups).
+        data['organ_donation_types'] = formData.getAll('organ_types');
+        data['organ_donation_purpose'] = formData.getAll('organ_donation_purpose');
+        data['tissue_donation_types'] = formData.getAll('tissue_donation_types');
 
-        // Convert FormData to object
+        // Loop through all other fields. For radio buttons and single-value fields,
+        // the last value for a given key will be used, which is correct.
         for (let [key, value] of formData.entries()) {
-            switch (key) {
-                case 'organ_types':
-                    data['organ_donation_types'].push(value);
-                    break;
-                case 'organ_donation_purpose':
-                    data['organ_donation_purpose'].push(value);
-                    break;
-                case 'pain_management_priority':
-                case 'accept_medication_side_effects':
-                case 'notary_required':
-                case 'use_witnesses':
-                     data[key] = (value === 'true' || value === 'yes');
-                     break;
-                default:
-                    // For radio buttons or other fields, the last value wins, which is correct.
-                    data[key] = value;
-                    break;
+            if (key !== 'organ_types' && key !== 'organ_donation_purpose' && key !== 'tissue_donation_types') {
+                data[key] = value;
             }
         }
         
-        // Ensure boolean for checkboxes that might not be in formData if unchecked
-        const checkboxes = ['pain_management_priority', 'accept_medication_side_effects', 'notary_required', 'use_witnesses'];
-        checkboxes.forEach(cb => {
-            if (!data.hasOwnProperty(cb)) {
-                data[cb] = false;
-            }
+        // --- 2. Normalize the collected data ---
+        // Handle boolean checkboxes (which have value="true" in HTML).
+        // If a checkbox was unchecked, it won't be in `data`, so we set it to `false`.
+        const booleanCheckboxes = ['pain_management_priority', 'accept_medication_side_effects', 'notary_required', 'use_witnesses'];
+        booleanCheckboxes.forEach(cb => {
+            data[cb] = data.hasOwnProperty(cb) && data[cb] === 'true';
         });
 
-        // Handle "yes/no" checkboxes for donation
+        // Handle checkboxes that should result in 'yes' or 'no'.
         const yesNoCheckboxes = ['want_organ_donation', 'want_tissue_donation'];
         yesNoCheckboxes.forEach(cb => {
+            // If the key isn't in `data`, the checkbox was unchecked.
             if (!data.hasOwnProperty(cb)) {
                 data[cb] = 'no';
             }
@@ -482,6 +471,7 @@ class FormUtils {
         // Reset conditional fields that reset() might not handle perfectly
         document.getElementById('organDonationTypes').style.display = 'none';
         document.getElementById('organDonationPurpose').style.display = 'none';
+        document.getElementById('tissueDonationTypes').style.display = 'none';
 
         for (const key in data) {
             if (!data.hasOwnProperty(key)) continue;
@@ -501,6 +491,11 @@ class FormUtils {
                         const checkbox = form.querySelector(`input[name="organ_donation_purpose"][value="${purpose}"]`);
                         if (checkbox) checkbox.checked = true;
                     });
+                } else if (key === 'tissue_donation_types' && Array.isArray(value)) {
+                    value.forEach(tissue => {
+                        const checkbox = form.querySelector(`input[name="tissue_donation_types"][value="${tissue}"]`);
+                        if (checkbox) checkbox.checked = true;
+                    });
                 }
                 continue;
             }
@@ -515,6 +510,9 @@ class FormUtils {
                 // This handles single boolean checkboxes
                 if (typeof value === 'boolean') {
                     el.checked = value;
+                } else if (value === 'yes' && el.getAttribute('value') === 'yes') {
+                    // This handles 'yes'/'no' checkboxes
+                    el.checked = true;
                 }
             } else {
                 // Handles text, date, select-one, textarea, email, tel
@@ -528,6 +526,12 @@ class FormUtils {
         const organCheckbox = form.querySelector('input[name="want_organ_donation"]');
         if (organCheckbox) {
             organCheckbox.dispatchEvent(new Event('change'));
+        }
+
+        // Trigger change on tissue donation checkbox to show/hide specific types
+        const tissueCheckbox = form.querySelector('input[name="want_tissue_donation"]');
+        if (tissueCheckbox) {
+            tissueCheckbox.dispatchEvent(new Event('change'));
         }
 
         // Set signature method checkboxes and trigger change
@@ -649,6 +653,19 @@ function setupEventListeners() {
             } else {
                 typesDiv.style.display = 'none';
                 purposeDiv.style.display = 'none';
+            }
+        });
+    }
+
+    // Tissue donation checkbox
+    const tissueCheckbox = document.querySelector('input[name="want_tissue_donation"]');
+    if (tissueCheckbox) {
+        tissueCheckbox.addEventListener('change', (e) => {
+            const typesDiv = document.getElementById('tissueDonationTypes');
+            if (e.target.checked) {
+                typesDiv.style.display = 'block';
+            } else {
+                typesDiv.style.display = 'none';
             }
         });
     }
