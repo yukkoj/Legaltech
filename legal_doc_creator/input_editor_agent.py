@@ -319,7 +319,18 @@ class InputEditorAgent:
                 )
             )
             
-            llm_feedback = json.loads(response.text)
+            llm_text = response.text.strip()
+
+            # The model sometimes wraps the JSON in markdown code fences.
+            # We need to strip them before parsing.
+            if llm_text.startswith("```json"):
+                llm_text = llm_text[7:]
+            elif llm_text.startswith("```"):
+                llm_text = llm_text[3:]
+            
+            if llm_text.endswith("```"):
+                llm_text = llm_text[:-3]
+            llm_feedback = json.loads(llm_text.strip())
 
             if llm_feedback.get("issues"):
                 for issue in llm_feedback["issues"]:

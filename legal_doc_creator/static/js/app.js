@@ -192,6 +192,11 @@ class FormUtils {
             }
         }
         
+        const rightToKnowEl = form.querySelector('input[name="right_not_to_know_preference"]:checked');
+        if (rightToKnowEl) {
+            data['right_not_to_know_preference'] = rightToKnowEl.value;
+        }
+        
         // --- 2. Normalize the collected data ---
         // Handle boolean checkboxes (which have value="true" in HTML).
         // If a checkbox was unchecked, it won't be in `data`, so we set it to `false`.
@@ -400,16 +405,17 @@ class FormUtils {
         FormUtils.showLoading('Generating PDF...');
         
         try {
-            // Use the questionnaire data that's currently loaded in the form
-            if (!currentQuestionnaireData) {
-                alert('No questionnaire data found. Please fill out the form or load a saved file.');
+            // Use the generated document text
+            if (!generatedDocument || !generatedDocument.document) {
+                alert('No document has been generated yet. Please generate the document first.');
                 FormUtils.hideLoading();
                 return;
             }
             
             // Prepare payload for the API
             const payload = {
-                questionnaire_data: currentQuestionnaireData,
+                document_text: generatedDocument.document,
+                questionnaire_data: currentQuestionnaireData, // for full_name in footer
                 document_type: 'advanced_directive'
             };
             

@@ -278,7 +278,6 @@ def generate_pdf():
             return jsonify({
                 'status': 'success',
                 'pdf_file': Path(pdf_path).name,
-                'pdf_path': str(pdf_path),
                 'message': message
             })
         else:
