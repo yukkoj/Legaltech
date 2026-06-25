@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 class TemplateManager:
     """Manages document templates and rendering"""
     
-    def __init__(self, template_dir: str = "legal_doc_creator/templates"):
+    def __init__(self, template_dir: str = "templates"):
         self.template_dir = Path(template_dir)
         self.template_dir.mkdir(parents=True, exist_ok=True)
         # Added select_autoescape for security best practices
