@@ -44,6 +44,17 @@ class TemplateManager:
                 return f"({digits[0:3]}) {digits[3:6]}-{digits[6:10]}"
             return s
         self.env.filters['format_phone'] = format_phone
+
+        def format_date(s):
+            """Formats a YYYY-MM-DD string to MM/DD/YYYY."""
+            if not s:
+                return ''
+            if '-' in s:
+                parts = s.split('-')
+                if len(parts) == 3 and len(parts[0]) == 4:
+                    return f"{parts[1]}/{parts[2]}/{parts[0]}"
+            return s
+        self.env.filters['format_date'] = format_date
     
     def render_template(self, template_name: str, data: Dict[str, Any]) -> str:
         """Render template with JSON data"""
