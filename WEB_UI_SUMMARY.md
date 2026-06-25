@@ -2,7 +2,7 @@
 
 ## ✅ What Was Created
 
-A complete **web-based UI system** for the Advanced Directive Creator with user-friendly form input and backend document generation.
+A complete **web-based UI system** for the Advance Directive Creator with user-friendly form input and backend document generation.
 
 ### Components Created
 

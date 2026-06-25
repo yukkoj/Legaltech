@@ -1,5 +1,5 @@
 /**
- * Advanced Directive Form - Frontend JavaScript
+ * Advance Directive Form - Frontend JavaScript
  * Handles form navigation, validation, and API communication
  */
 
@@ -394,7 +394,7 @@ class FormUtils {
         const element = document.createElement('a');
         const file = new Blob([result.document], { type: 'text/plain' });
         element.href = URL.createObjectURL(file);
-        element.download = `advanced_directive_${new Date().toISOString().split('T')[0]}.txt`;
+        element.download = `advance_directive_${new Date().toISOString().split('T')[0]}.txt`;
         document.body.appendChild(element);
         element.click();
         document.body.removeChild(element);
@@ -416,7 +416,7 @@ class FormUtils {
             const payload = {
                 document_text: generatedDocument.document,
                 questionnaire_data: currentQuestionnaireData, // for full_name in footer
-                document_type: 'advanced_directive'
+                document_type: 'advance_directive'
             };
             
             // Generate PDF from the document text
@@ -645,7 +645,7 @@ function setupEventListeners() {
 
     // Generate button
     document.getElementById('generateBtn').addEventListener('click', async () => {
-        FormUtils.showLoading('Generating your Advanced Directive document...');
+        FormUtils.showLoading('Generating your Advance Directive document...');
         const formData = FormUtils.getFormData();
         const result = await DocumentAPI.generateDocument(formData);
         FormUtils.hideLoading();

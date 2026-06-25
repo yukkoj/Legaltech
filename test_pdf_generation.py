@@ -39,7 +39,7 @@ headers = {
 # Request body
 data = {
     "questionnaire_data": sample_questionnaire,
-    "document_type": "advanced_directive"
+    "document_type": "advance_directive"
 }
 
 # Send POST request

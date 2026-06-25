@@ -47,7 +47,7 @@ http://localhost:5000
 
 ### 📄 Output Files
 - `questionnaire_*.json` - User data (editable)
-- `advanced_directive_*.txt` - Generated document
+- `advance_directive_*.txt` - Generated document
 
 ---
 
@@ -97,7 +97,7 @@ app.run(host='127.0.0.1', port=5001, debug=True)
 Edit `legal_doc_creator/templates/index.html`
 
 ### Customize Document
-Edit `legal_doc_creator/templates/advanced_directive.jinja2`
+Edit `legal_doc_creator/templates/advance_directive.jinja2`
 
 ### Change Styling
 Edit `legal_doc_creator/static/css/style.css`

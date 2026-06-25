@@ -1,6 +1,6 @@
 # Running the Web-Based UI
 
-This guide explains how to run the Advanced Directive Creator with the web-based UI.
+This guide explains how to run the Advance Directive Creator with the web-based UI.
 
 ## Setup
 
@@ -19,7 +19,7 @@ This installs:
 
 The system automatically creates the template if it doesn't exist. Check that these files exist:
 - `legal_doc_creator/template_system.py`
-- `legal_doc_creator/templates/advanced_directive.jinja2` (auto-created on first run)
+- `legal_doc_creator/templates/advance_directive.jinja2` (auto-created on first run)
 
 ### 3. Start the Flask Server
 
@@ -68,7 +68,7 @@ http://localhost:5000
 
 6. **Review & Generate Tab**
    - Click "Validate Input" to check for issues
-   - Click "Generate Document" to create the Advanced Directive
+   - Click "Generate Document" to create the Advance Directive
    - Download or copy the document
 
 ### Data Flow (Backend)
@@ -100,7 +100,7 @@ Validates questionnaire data without generating document
 - **Response**: Validation results (issues, suggestions, is_valid)
 
 ### POST /api/generate-document
-Validates and generates Advanced Directive document
+Validates and generates Advance Directive document
 - **Request**: JSON questionnaire data
 - **Response**: Document text + metadata
 
@@ -119,7 +119,7 @@ Health check endpoint
 Generated files are saved in `legal_doc_creator/output/`:
 
 - `questionnaire_YYYYMMDD_HHMMSS.json` - User questionnaire data
-- `advanced_directive_draft.txt` - Generated document
+- `advance_directive_draft.txt` - Generated document
 
 You can download these files from the UI or access them directly from the output folder.
 
@@ -173,7 +173,7 @@ Edit `static/js/app.js`
 Edit `legal_doc_creator/input_editor_agent.py`
 
 ### Customize Document Template
-Edit `legal_doc_creator/templates/advanced_directive.jinja2`
+Edit `legal_doc_creator/templates/advance_directive.jinja2`
 
 ## Architecture
 
@@ -192,7 +192,7 @@ legal_doc_creator/
 ├── orchestrator.py                 ← Workflow coordination
 └── output/                         ← Generated files
     ├── questionnaire_*.json
-    └── advanced_directive_*.txt
+    └── advance_directive_*.txt
 ```
 
 ## Next Steps

@@ -73,7 +73,7 @@ def validate_questionnaire():
         data = request.get_json()
         
         # Validate using InputEditorAgent
-        review_result = input_editor_workflow.editor.review_input(data, 'advanced_directive')
+        review_result = input_editor_workflow.editor.review_input(data, 'advance_directive')
         
         return jsonify({
             'status': 'success',
@@ -93,7 +93,7 @@ def validate_questionnaire():
 @app.route('/api/generate-document', methods=['POST'])
 def generate_document():
     """
-    Generate Advanced Directive document from questionnaire data
+    Generate Advance Directive document from questionnaire data
     Endpoint: POST /api/generate-document
     Body: JSON questionnaire data
     Returns: Document text + metadata
@@ -104,7 +104,7 @@ def generate_document():
         # Step 1: Generate document
         result = drafting_workflow.generate_from_questionnaire(
             data,
-            document_type='advanced_directive',
+            document_type='advance_directive',
             save_to_file=True
         )
         
@@ -250,7 +250,7 @@ def generate_pdf():
             # Generate document text using the drafting workflow
             draft_result = drafting_workflow.generate_from_questionnaire(
                 questionnaire_data,
-                document_type=data.get('document_type', 'advanced_directive'),
+                document_type=data.get('document_type', 'advance_directive'),
                 save_to_file=False  # We just need the text
             )
 
@@ -269,7 +269,7 @@ def generate_pdf():
         success, message, pdf_path = generate_pdf_from_document(
             document_text,
             OUTPUT_DIR,
-            title=data.get('document_type', 'advanced_directive').replace('_', ' ').title(),
+            title=data.get('document_type', 'advance_directive').replace('_', ' ').title(),
             full_name=full_name
         )
         

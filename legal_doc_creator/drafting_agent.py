@@ -32,9 +32,9 @@ class DraftingAgent:
         self.template_manager = TemplateManager()
         self.workflow = DraftingWorkflow()
     
-    def generate_advanced_directive(self, questionnaire_data: Dict[str, Any]) -> Dict[str, Any]:
+    def generate_advance_directive(self, questionnaire_data: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Generate an Advanced Directive document from questionnaire data
+        Generate an Advance Directive document from questionnaire data
         
         Args:
             questionnaire_data: Validated questionnaire responses as dict/JSON
@@ -42,10 +42,10 @@ class DraftingAgent:
         Returns:
             {
                 'document': rendered document text,
-                'document_type': 'advanced_directive',
+                'document_type': 'advance_directive',
                 'status': 'success' or 'error',
                 'error_message': if status is error,
-                'template_used': 'advanced_directive.jinja2'
+                'template_used': 'advance_directive.jinja2'
             }
         """
         
@@ -53,15 +53,15 @@ class DraftingAgent:
             # Use the workflow to render
             result = self.workflow.workflow_questionnaire_to_draft(
                 questionnaire_data,
-                document_type='advanced_directive'
+                document_type='advance_directive'
             )
             
             if result.get('draft'):
                 return {
                     'document': result['draft'],
-                    'document_type': 'advanced_directive',
+                    'document_type': 'advance_directive',
                     'status': 'success',
-                    'template_used': 'advanced_directive.jinja2',
+                    'template_used': 'advance_directive.jinja2',
                     'json_file': result.get('json_file'),
                     'data_quality_notes': result.get('validation_issues', [])
                 }
@@ -69,19 +69,19 @@ class DraftingAgent:
                 return {
                     'status': 'error',
                     'error_message': 'Template not found',
-                    'document_type': 'advanced_directive'
+                    'document_type': 'advance_directive'
                 }
         
         except Exception as e:
-            logger.error(f"Error generating advanced directive: {e}")
+            logger.error(f"Error generating advance directive: {e}")
             return {
                 'status': 'error',
                 'error_message': str(e),
-                'document_type': 'advanced_directive'
+                'document_type': 'advance_directive'
             }
     
     def generate_document(self, questionnaire_data: Dict[str, Any], 
-                         document_type: str = "advanced_directive") -> Dict[str, Any]:
+                         document_type: str = "advance_directive") -> Dict[str, Any]:
         """
         Generic document generation method
         
@@ -94,9 +94,9 @@ class DraftingAgent:
         """
         
         document_generators = {
-            'advanced_directive': self.generate_advanced_directive,
-            'advance_directive': self.generate_advanced_directive,
-            'living_will': self.generate_advanced_directive,
+            'advanced_directive': self.generate_advance_directive,
+            'advance_directive': self.generate_advance_directive,
+            'living_will': self.generate_advance_directive,
         }
         
         generator = document_generators.get(document_type.lower())
@@ -149,7 +149,7 @@ class RefinedDraftingWorkflow:
         self.drafting_agent = DraftingAgent()
     
     def generate_from_questionnaire(self, questionnaire_data: Dict[str, Any],
-                                    document_type: str = "advanced_directive",
+                                    document_type: str = "advance_directive",
                                     save_to_file: bool = True) -> Dict[str, Any]:
         """
         Generate document from questionnaire data

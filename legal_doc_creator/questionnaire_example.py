@@ -1,21 +1,21 @@
 """
-Example usage of the Advanced Directive questionnaire
+Example usage of the Advance Directive questionnaire
 Shows how to integrate the questionnaire into the document creation workflow
 """
 
 try:
-    from legal_doc_creator.questionnaires import AdvancedDirectiveQuestionnaireFlow, get_questionnaire
+    from legal_doc_creator.questionnaires import AdvanceDirectiveQuestionnaireFlow, get_questionnaire
 except ImportError:
-    from questionnaires import AdvancedDirectiveQuestionnaireFlow, get_questionnaire
+    from questionnaires import AdvanceDirectiveQuestionnaireFlow, get_questionnaire
 import json
 
 
-def example_collect_advanced_directive_info():
+def example_collect_advance_directive_info():
     """
-    Example: Collect user information for an Advanced Directive
+    Example: Collect user information for an Advance Directive
     """
     # Create and run the questionnaire
-    flow = AdvancedDirectiveQuestionnaireFlow()
+    flow = AdvanceDirectiveQuestionnaireFlow()
     responses = flow.run_interactive()
     
     # Convert to dictionary for processing
@@ -34,7 +34,7 @@ def example_with_orchestrator():
     Example: How to integrate questionnaire into orchestrator workflow
     """
     
-    document_type = "advanced_directive"
+    document_type = "advance_directive"
     
     # Get the questionnaire
     questionnaire = get_questionnaire(document_type)
@@ -44,22 +44,22 @@ def example_with_orchestrator():
         return
     
     # Create flow and collect responses
-    flow = AdvancedDirectiveQuestionnaireFlow()
+    flow = AdvanceDirectiveQuestionnaireFlow()
     responses = flow.run_interactive()
     
     # Now you can pass responses to agents for document generation
     document_data = responses.to_dict()
     
     # Example: Pass to drafting agent
-    # draft = drafting_agent.generate_advanced_directive(document_data)
+    # draft = drafting_agent.generate_advance_directive(document_data)
     
     return document_data
 
 
 if __name__ == "__main__":
     # Run the questionnaire
-    print("Starting Advanced Directive Questionnaire...")
-    responses = example_collect_advanced_directive_info()
+    print("Starting Advance Directive Questionnaire...")
+    responses = example_collect_advance_directive_info()
     
     # Optional: Save responses to file
     import json

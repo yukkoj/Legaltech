@@ -8,8 +8,8 @@ from dataclasses import dataclass, asdict
 
 
 @dataclass
-class AdvancedDirectiveQuestionnaire:
-    """Questionnaire for Advanced Directive (Advance Directive/Living Will)"""
+class AdvanceDirectiveQuestionnaire:
+    """Questionnaire for Advance Directive (Living Will)"""
     
     # Personal Information
     full_name: str = ""
@@ -113,19 +113,19 @@ class AdvancedDirectiveQuestionnaire:
         return data
 
 
-class AdvancedDirectiveQuestionnaireFlow:
+class AdvanceDirectiveQuestionnaireFlow:
     """Interactive questionnaire flow for advanced directive"""
     
     def __init__(self):
-        self.responses = AdvancedDirectiveQuestionnaire()
+        self.responses = AdvanceDirectiveQuestionnaire()
     
-    def run_interactive(self) -> AdvancedDirectiveQuestionnaire:
+    def run_interactive(self) -> AdvanceDirectiveQuestionnaire:
         """Run interactive questionnaire and collect responses"""
         print("\n" + "="*70)
-        print("ADVANCED DIRECTIVE QUESTIONNAIRE")
+        print("ADVANCE DIRECTIVE QUESTIONNAIRE")
         print("="*70)
-        print("\nThis questionnaire will guide you through creating an Advanced Directive.")
-        print("An Advanced Directive allows you to specify your healthcare preferences")
+        print("\nThis questionnaire will guide you through creating an Advance Directive.")
+        print("An Advance Directive allows you to specify your healthcare preferences")
         print("in advance, in case you become unable to communicate your wishes.\n")
         
         # Personal Information
@@ -206,7 +206,7 @@ class AdvancedDirectiveQuestionnaireFlow:
         """Collect signature preference for California."""
         print("\n--- SECTION 2: DOCUMENT VALIDATION (SIGNATURES) ---\n")
         
-        print("In California, an Advanced Directive must be signed with either:")
+        print("In California, an Advance Directive must be signed with either:")
         print("  1. A notary public")
         print("  2. Two qualified witnesses")
         prompt = "\nHow would you like to validate your document? (Enter 1 or 2): "
@@ -420,13 +420,13 @@ class AdvancedDirectiveQuestionnaireFlow:
 
 # Questionnaire registry for document types
 QUESTIONNAIRE_REGISTRY = {
-    "advanced_directive": AdvancedDirectiveQuestionnaire,
-    "advance_directive": AdvancedDirectiveQuestionnaire,
-    "living_will": AdvancedDirectiveQuestionnaire,
+    "advanced_directive": AdvanceDirectiveQuestionnaire,
+    "advance_directive": AdvanceDirectiveQuestionnaire,
+    "living_will": AdvanceDirectiveQuestionnaire,
 }
 
 
-def get_questionnaire(document_type: str) -> Optional[AdvancedDirectiveQuestionnaire]:
+def get_questionnaire(document_type: str) -> Optional[AdvanceDirectiveQuestionnaire]:
     """Get questionnaire instance for document type"""
     questionnaire_class = QUESTIONNAIRE_REGISTRY.get(document_type.lower())
     if questionnaire_class:

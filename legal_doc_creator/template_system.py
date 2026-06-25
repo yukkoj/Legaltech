@@ -111,7 +111,7 @@ class DraftingWorkflow:
         self.data_manager = JSONDataManager()
     
     def workflow_questionnaire_to_draft(self, questionnaire_data: Dict[str, Any], 
-                                       document_type: str = "advanced_directive") -> Dict[str, Any]:
+                                       document_type: str = "advance_directive") -> Dict[str, Any]:
         """
         Complete workflow from questionnaire to draft
         
@@ -144,15 +144,15 @@ class DraftingWorkflow:
 
 
 # Example: Sample Advanced Directive Template
-ADVANCED_DIRECTIVE_TEMPLATE = '''
-{# Advanced Directive Template using Jinja2 #}
+ADVANCE_DIRECTIVE_TEMPLATE = '''
+{# Advance Directive Template using Jinja2 #}
 {% set today = now() %}
 
 ADVANCE DIRECTIVE FOR HEALTH CARE
 STATE OF CALIFORNIA
 
 I, {{ full_name }}, being of sound mind and at least eighteen (18) years of age, execute this Advance Directive for Health Care. 
-I revoke any prior advanced directives I have made. This document reflects my healthcare preferences as of {{ today.strftime("%B %d, %Y") }}.
+I revoke any prior advance directives I have made. This document reflects my healthcare preferences as of {{ today.strftime("%B %d, %Y") }}.
 
 PURPOSE:
 This document allows me to make known my wishes regarding my medical treatment if I become unable to communicate them. I have the right to refuse any medical treatment.
@@ -455,7 +455,7 @@ Date: _______________
 def setup_example_template():
     """Create example template for testing"""
     manager = TemplateManager()
-    manager.create_template("advanced_directive.jinja2", ADVANCED_DIRECTIVE_TEMPLATE)
+    manager.create_template("advance_directive.jinja2", ADVANCED_DIRECTIVE_TEMPLATE)
 
 
 if __name__ == "__main__":

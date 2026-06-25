@@ -1,6 +1,6 @@
 # Legal Document Creator
 
-A web-based platform for generating legal documents through an intuitive user interface and backend document automation. Currently supporting Advanced Directives (Living Wills) with a clean, responsive form-based UI.
+A web-based platform for generating legal documents through an intuitive user interface and backend document automation. Currently supporting Advance Directives (Living Wills) with a clean, responsive form-based UI.
 
 ## Architecture
 
@@ -52,7 +52,7 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for detailed architecture documentation.
    - Witnesses
    - Review & Generate
 
-5. **Click "Generate Document"** to create your Advanced Directive
+5. **Click "Generate Document"** to create your Advance Directive
 
 6. **Download or copy** the generated document
 

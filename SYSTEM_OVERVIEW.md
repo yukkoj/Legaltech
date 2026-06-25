@@ -111,7 +111,7 @@ Legaltech/
 │   ├── requirements.txt           ← Python dependencies
 │   ├── templates/
 │   │   ├── index.html            ← Main form UI
-│   │   └── advanced_directive.jinja2  ← Document template
+│   │   └── advance_directive.jinja2  ← Document template
 │   ├── static/
 │   │   ├── css/
 │   │   │   └── style.css         ← Form styling
@@ -123,7 +123,7 @@ Legaltech/
 │   ├── questionnaires.py         ← Data models
 │   └── output/                   ← Generated files
 │       ├── questionnaire_*.json
-│       └── advanced_directive_*.txt
+│       └── advance_directive_*.txt
 ├── start_ui.bat                  ← Windows launcher
 ├── start_ui.sh                   ← Mac/Linux launcher
 ├── README.md                     ← Project overview
@@ -166,7 +166,7 @@ Legaltech/
 {
   "status": "success",
   "document": "[Full document text]",
-  "document_file": "legal_doc_creator/output/advanced_directive_draft.txt",
+  "document_file": "legal_doc_creator/output/advance_directive_draft.txt",
   "questionnaire_file": "legal_doc_creator/output/questionnaire_20240609_120000.json",
   "message": "Document generated successfully"
 }

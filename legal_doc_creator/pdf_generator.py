@@ -288,7 +288,7 @@ class PDFGenerator:
 
 
 def generate_pdf_from_document(document_text: str, output_dir: Path, 
-                              title: str = "Advanced Directive", full_name: Optional[str] = None) -> Tuple[bool, str, Optional[str]]:
+                              title: str = "Advance Directive", full_name: Optional[str] = None) -> Tuple[bool, str, Optional[str]]:
     """
     Utility function to generate PDF from document text
     

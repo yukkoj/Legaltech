@@ -42,7 +42,7 @@ class InputEditorAgent:
             self.model = None
             logger.warning("InputEditorAgent: No Gemini API key provided. LLM-based analysis will be skipped.")
     
-    def review_input(self, questionnaire_data: Dict[str, Any], document_type: str = "advanced_directive") -> Dict[str, Any]:
+    def review_input(self, questionnaire_data: Dict[str, Any], document_type: str = "advance_directive") -> Dict[str, Any]:
         """
         Complete review of questionnaire input
         
@@ -85,7 +85,7 @@ class InputEditorAgent:
         
         # Required fields that cannot be empty
         required_fields = {
-            'advanced_directive': [
+            'advance_directive': [
                 ('full_name', 'Full legal name'),
                 ('date_of_birth', 'Date of birth'),
                 ('state_of_residence', 'State of residence'),
@@ -100,7 +100,7 @@ class InputEditorAgent:
                 self.feedback.append(f"❌ MISSING: {label} (required)")
         
         # Check signature method: Either notary OR 2 witnesses required
-        if document_type == 'advanced_directive':
+        if document_type == 'advance_directive':
             witness_1 = data.get('witness_1_name', '').strip()
             witness_2 = data.get('witness_2_name', '').strip()
             notary_required = data.get('notary_required')
@@ -224,7 +224,7 @@ class InputEditorAgent:
     def _check_legal_validity(self, data: Dict[str, Any], document_type: str):
         """Check for legal requirements that might affect validity"""
         
-        if document_type == 'advanced_directive':
+        if document_type == 'advance_directive':
             # Age requirement (typically 18+)
             # Note: Can't validate exact age without doing calculation
             dob = data.get('date_of_birth', '')
@@ -409,7 +409,7 @@ class InputEditorWorkflow:
         self.editor = InputEditorAgent()
     
     def review_and_request_changes(self, questionnaire_data: Dict[str, Any], 
-                                   document_type: str = "advanced_directive") -> Tuple[bool, Dict[str, Any]]:
+                                   document_type: str = "advance_directive") -> Tuple[bool, Dict[str, Any]]:
         """
         Review questionnaire and return whether it's ready or needs changes
         

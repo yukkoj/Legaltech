@@ -2,7 +2,7 @@
 
 ## What Was Built
 
-A **complete web-based Advanced Directive Creator** with user input form in the browser and backend document generation.
+A **complete web-based Advance Directive Creator** with user input form in the browser and backend document generation.
 
 ---
 
@@ -153,7 +153,7 @@ Open browser to: `http://localhost:5000`
 ## 🔌 API Endpoints
 
 ### POST /api/generate-document
-Validates questionnaire data and generates Advanced Directive document.
+Validates questionnaire data and generates Advance Directive document.
 
 **Request:** JSON with form data
 **Response:** Document text + metadata
@@ -182,7 +182,7 @@ Legaltech/
 │   ├── requirements.txt              ← NEW: Dependencies
 │   ├── templates/
 │   │   ├── index.html               ← NEW: Form UI
-│   │   └── advanced_directive.jinja2 (existing)
+│   │   └── advance_directive.jinja2 (existing)
 │   ├── static/
 │   │   ├── css/
 │   │   │   └── style.css            ← NEW: Styling
@@ -237,7 +237,7 @@ Legaltech/
 
 ### Easy Modifications
 - **Form Fields**: Edit `templates/index.html`
-- **Document Content**: Edit `templates/advanced_directive.jinja2`
+- **Document Content**: Edit `templates/advance_directive.jinja2`
 - **Styling**: Edit `static/css/style.css`
 - **Validation Rules**: Edit `input_editor_agent.py`
 - **Form Logic**: Edit `static/js/app.js`
