@@ -18,7 +18,6 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for detailed architecture documentation.
 ✅ **Template-Based Generation** - Documents created from Jinja2 templates
 ✅ **JSON Data Storage** - Questionnaires saved as JSON for easy editing and regeneration
 ✅ **Download Documents** - Export generated documents as text files
-✅ **State Selection** - Support for all US states with state-specific guidance
 ✅ **Comprehensive Questionnaire** - Covers personal info, healthcare preferences, values, witnesses
 
 ## Quick Start

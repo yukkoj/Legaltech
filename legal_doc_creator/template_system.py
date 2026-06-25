@@ -152,7 +152,7 @@ ADVANCE DIRECTIVE FOR HEALTH CARE
 STATE OF CALIFORNIA
 
 I, {{ full_name }}, being of sound mind and at least eighteen (18) years of age, execute this Advance Directive for Health Care. 
-I revoke any prior advance directives I have made. This document reflects my healthcare preferences as of {{ today.strftime("%B %d, %Y") }}.
+I revoke any prior advanced directives I have made. This document reflects my healthcare preferences as of {{ today.strftime("%B %d, %Y") }}.
 
 PURPOSE:
 This document allows me to make known my wishes regarding my medical treatment if I become unable to communicate them. I have the right to refuse any medical treatment.
