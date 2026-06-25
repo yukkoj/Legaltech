@@ -178,7 +178,7 @@ class PDFGenerator:
                 safe_para = self._escape_special_chars(clean_para)
 
                 # Heuristic for identifying headings (single line, all caps)
-                if (safe_para.isupper() and len(safe_para.splitlines()) == 1 and len(safe_para) < 80 and not '_' in safe_para):
+                if (clean_para.isupper() and len(clean_para.splitlines()) == 1 and len(clean_para) < 80 and not '_' in clean_para):
                     story.append(Paragraph(safe_para, self.styles['SectionHeading']))
                 elif '________________' in safe_para:
                     story.append(Paragraph(safe_para.replace('_', '&#95;').replace('\n', '<br/>'), self.styles['SignatureLine']))
