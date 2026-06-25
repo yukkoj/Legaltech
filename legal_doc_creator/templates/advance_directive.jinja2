@@ -11,10 +11,6 @@ I revoke any prior advance directives I have made. This document reflects my hea
 PURPOSE:
 This document allows me to make known my wishes regarding my medical treatment if I become unable to communicate them. I have the right to refuse any medical treatment.
 
-My agent's authority becomes effective only when my primary physician determines that I lack the capacity to make my own health care decisions.
-
-My agent should follow my known wishes. If my wishes are unclear or a situation is not specifically covered in this document, my agent should decide based on my values, comfort, and best interests.
-
 
 PART I: DESIGNATION OF HEALTHCARE AGENT
 
@@ -44,8 +40,16 @@ Email: {{ alternate_agent_2_email }}
 Address: {{ alternate_agent_2_address }}
 {% endif %}
 
+PART II: AGENT'S AUTHORITY
+My agent's authority becomes effective only when my primary physician determines that I lack the capacity to make my own health care decisions.
+My agent is authorized to make all health care decisions for me, including decisions to provide, withhold, or withdraw life-sustaining treatment. 
+My agent is also authorized to have access to, obtain, inspect, copy, and disclose any and all of my health care information and medical records, to the extent permitted by California law, and to speak with my health care providers on my behalf. 
+This authority includes information relating to my diagnosis, treatment, prognosis, and other protected health information.
+My agent should follow my known wishes. If my wishes are unclear or a situation is not specifically covered in this document, my agent should decide based on my values, comfort, and best interests.
+
+
 {% if want_cpr or want_mechanical_ventilation or want_feeding_tube or want_dialysis or want_antibiotics or want_blood_transfusions %}
-PART II: LIFE-SUSTAINING TREATMENT PREFERENCES
+PART III: LIFE-SUSTAINING TREATMENT PREFERENCES
 
 A. Cardiopulmonary Resuscitation (CPR)
 {% if want_cpr == 'yes' %}
@@ -114,7 +118,7 @@ My preference regarding blood transfusions is uncertain, and I leave this decisi
 {% endif %}
 {% endif %}
 
-PART III: CONDITION-SPECIFIC INSTRUCTIONS
+PART IV: CONDITION-SPECIFIC INSTRUCTIONS
 
 {# Initialize lists to group conditions by preference #}
 {%- set conditions_for_no = [] -%}
@@ -167,7 +171,7 @@ My preference is UNCERTAIN, and I leave the decision to my healthcare agent in t
 {% endif %}
 {% endif %}
 
-PART IV: PAIN MANAGEMENT
+PART V: PAIN MANAGEMENT
 
 {% if pain_management_priority %}
 I direct that my comfort and pain management be prioritized, even if it might shorten my life.
@@ -182,7 +186,7 @@ I am not willing to accept medications that may hasten death, even if they are f
 {% endif %}
 
 {% if personal_values or quality_of_life_definition or fears_and_concerns %}
-PART V: PERSONAL VALUES AND BELIEFS
+PART VI: PERSONAL VALUES AND BELIEFS
 
 {% if personal_values %}
 What matters most to me: {{ personal_values }}
@@ -195,7 +199,7 @@ My main concerns: {{ fears_and_concerns }}
 {% endif %}
 {% endif %}
 
-PART VI: RIGHT NOT TO KNOW
+PART VII: RIGHT NOT TO KNOW
 
 {% if data.get('right_not_to_know_preference')|trim == 'agent_receives_info' %}
 I do not wish to be informed of my specific diagnosis/prognosis, and instead authorize my designated agent to receive and act upon this information.
@@ -206,7 +210,7 @@ I wish to be fully informed of my medical condition, diagnosis, prognosis, and t
 {% endif %}
 
 {% if want_organ_donation == 'yes' or want_tissue_donation == 'yes' %}
-PART VII: ORGAN AND TISSUE DONATION
+PART VIII: ORGAN AND TISSUE DONATION
 
 {% if want_organ_donation == 'yes' %}
 I wish to donate my organs for transplant. The specific organs I wish to donate are: {{ organ_donation_types | join_list }}.
@@ -229,7 +233,7 @@ I do not wish to donate tissue.
 {% endif %}
 
 {% if body_disposition or specific_wishes_body %}
-PART VIII: BODY DISPOSITION
+PART IX: BODY DISPOSITION
 
 {% if body_disposition %}
 Preference for my body: {{ body_disposition | replace('_', ' ') | capitalize_words }}
@@ -240,7 +244,7 @@ Special wishes: {{ specific_wishes_body }}
 I authorize my healthcare agent named in Part I to carry out these instructions regarding my remains.
 {% endif %}
 
-PART IX: SIGNATURE AND VALIDATION
+PART X: SIGNATURE AND VALIDATION
 
 I acknowledge this is my wishes regarding health care and authorize my healthcare agent to act according to this document.
 
