@@ -455,7 +455,7 @@ class FormUtils {
 
         if (result.status === 'success') {
             const link = document.createElement('a');
-            link.href = `${API_BASE}/download/json/${result.filename}`;
+            link.href = `${API_BASE}/download-questionnaire/${result.filename}`;
             link.download = result.filename;
             document.body.appendChild(link);
             link.click();
@@ -489,28 +489,23 @@ class FormUtils {
             if (!data.hasOwnProperty(key)) continue;
 
             const value = data[key];
-            const elements = form.querySelectorAll(`[name="${key}"]`);
-
-            if (elements.length === 0) {
-                // Handle special cases where key doesn't match a name attribute
-                if (key === 'organ_donation_types' && Array.isArray(value)) {
-                    value.forEach(organ => {
-                        const checkbox = form.querySelector(`input[name="organ_types"][value="${organ}"]`);
-                        if (checkbox) checkbox.checked = true;
-                    });
-                } else if (key === 'organ_donation_purpose' && Array.isArray(value)) {
-                    value.forEach(purpose => {
-                        const checkbox = form.querySelector(`input[name="organ_donation_purpose"][value="${purpose}"]`);
-                        if (checkbox) checkbox.checked = true;
-                    });
-                } else if (key === 'tissue_donation_types' && Array.isArray(value)) {
-                    value.forEach(tissue => {
-                        const checkbox = form.querySelector(`input[name="tissue_donation_types"][value="${tissue}"]`);
-                        if (checkbox) checkbox.checked = true;
-                    });
+            // Handle array values (multiple checkboxes) first
+            if (Array.isArray(value)) {
+                let inputName = key;
+                // Special mapping for field name differences
+                if (key === 'organ_donation_types') {
+                    inputName = 'organ_types';
                 }
+                
+                value.forEach(val => {
+                    const checkbox = form.querySelector(`input[name="${inputName}"][value="${val}"]`);
+                    if (checkbox) checkbox.checked = true;
+                });
                 continue;
             }
+
+            const elements = form.querySelectorAll(`[name="${key}"]`);
+            if (elements.length === 0) continue;
 
             const el = elements[0];
             const type = el.type;
