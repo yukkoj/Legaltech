@@ -67,7 +67,9 @@ class AdvanceDirectiveQuestionnaire:
     # Tissue Donation
     want_tissue_donation: str = ""  # "yes", "no", "uncertain"
     tissue_donation_types: List[str] = None  # ["all", "cornea", "bone", "skin"]
+    tissue_donation_purpose: List[str] = None # e.g., ["transplant", "therapy", "research", "education"]
     
+    donation_specifications: str = "" # Additional details for organ/tissue donation
     # Body Disposition
     body_disposition: str = ""  # "burial", "cremation", "donation_to_science", "no_preference"
     specific_wishes_body: str = ""
@@ -110,6 +112,8 @@ class AdvanceDirectiveQuestionnaire:
             data['organ_donation_purpose'] = ", ".join(self.organ_donation_purpose)
         if self.tissue_donation_types:
             data['tissue_donation_types'] = ", ".join(self.tissue_donation_types)
+        if self.tissue_donation_purpose:
+            data['tissue_donation_purpose'] = ", ".join(self.tissue_donation_purpose)
         return data
 
 
@@ -278,9 +282,11 @@ class AdvanceDirectiveQuestionnaireFlow:
     def _collect_organ_donation(self):
         """Collect organ and tissue donation preferences"""
         print("\n--- SECTION 4: ORGAN & TISSUE DONATION ---\n")
-        
+
+        donation_selected = False
         if self._ask_yes_no("Do you wish to donate organs?"):
             self.responses.want_organ_donation = "yes"
+            donation_selected = True
             print("\nWhich organs would you like to donate?")
             organs = []
             if self._ask_yes_no("  Donate all organs for transplant?"):
@@ -300,9 +306,10 @@ class AdvanceDirectiveQuestionnaireFlow:
             self.responses.organ_donation_purpose = purposes
         else:
             self.responses.want_organ_donation = "no"
-        
+
         if self._ask_yes_no("\nDo you wish to donate tissue (skin, bone, etc.)?"):
             self.responses.want_tissue_donation = "yes"
+            donation_selected = True
             print("\nWhich tissues would you like to donate?")
             tissues = []
             if self._ask_yes_no("  Donate all tissues for transplant?"):
@@ -313,8 +320,20 @@ class AdvanceDirectiveQuestionnaireFlow:
                     if self._ask_yes_no(f"  {tissue}?"):
                         tissues.append(tissue.lower())
             self.responses.tissue_donation_types = tissues
+
+            print("\nFor what purposes may your tissues be used?")
+            purposes = []
+            for purpose in ["Transplant", "Therapy", "Research", "Education"]:
+                if self._ask_yes_no(f"  {purpose}?"):
+                    purposes.append(purpose.lower())
+            self.responses.tissue_donation_purpose = purposes
         else:
             self.responses.want_tissue_donation = "no"
+
+        if donation_selected:
+            self.responses.donation_specifications = input(
+                "\nAny additional specifications for donation (e.g., for research only)? (optional): "
+            ).strip()
     
     def _collect_body_disposition(self):
         """Collect preferences for body after death"""

@@ -144,11 +144,26 @@ class InputEditorAgent:
                     "❌ INCONSISTENT: You chose for your agent to receive health information, but no primary healthcare agent is designated."
                 )
 
-        # If organ donation is yes, donation types should be specified
+        # If organ donation is 'yes', suggest specifying types and purpose if missing.
         if data.get('want_organ_donation') in ['yes', True]:
             if not data.get('organ_donation_types'):
                 self.suggestions.append(
-                    "💡 If wanting organ donation, specify which organs (heart, lungs, etc.)"
+                    "💡 For organ donation, consider specifying which organs (e.g., heart, lungs) or selecting 'all'."
+                )
+            if not data.get('organ_donation_purpose'):
+                self.suggestions.append(
+                    "💡 For organ donation, consider specifying the purpose (e.g., transplant, research)."
+                )
+
+        # If tissue donation is 'yes', suggest specifying types and purpose if missing.
+        if data.get('want_tissue_donation') in ['yes', True]:
+            if not data.get('tissue_donation_types'):
+                self.suggestions.append(
+                    "💡 For tissue donation, consider specifying which tissues (e.g., skin, bone) or selecting 'all'."
+                )
+            if not data.get('tissue_donation_purpose'):
+                self.suggestions.append(
+                    "💡 For tissue donation, consider specifying the purpose (e.g., transplant, research)."
                 )
         
 

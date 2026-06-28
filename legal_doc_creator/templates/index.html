@@ -337,53 +337,49 @@
                     </div>
 
                     <h3 style="margin-top: 20px;">Organ and Tissue Donation</h3>
-                    <div class="checkbox-group">
-                        <label>
-                            <input type="checkbox" name="want_organ_donation" value="yes">
-                            I wish to donate organs
-                        </label>
-                    </div>
 
-                    <div id="organDonationTypes" class="conditional-group" style="display:none;">
-                        <p>Which organs would you like to donate?</p>
-                        <label><input type="checkbox" name="organ_types" value="all"> All organs</label>
-                        <label><input type="checkbox" name="organ_types" value="heart"> Heart</label>
-                        <label><input type="checkbox" name="organ_types" value="lungs"> Lungs</label>
-                        <label><input type="checkbox" name="organ_types" value="liver"> Liver</label>
-                        <label><input type="checkbox" name="organ_types" value="kidneys"> Kidneys</label>
-                        <label><input type="checkbox" name="organ_types" value="pancreas"> Pancreas</label>
-                    </div>
-
-                    <div id="organDonationPurpose" class="conditional-group" style="display:none;">
-                        <p>For what purposes may your organs be used?</p>
-                        <label><input type="checkbox" name="organ_donation_purpose" value="all"> All purposes</label>
-                        <label><input type="checkbox" name="organ_donation_purpose" value="transplant"> For transplant</label>
-                        <label><input type="checkbox" name="organ_donation_purpose" value="therapy"> For therapy</label>
-                        <label><input type="checkbox" name="organ_donation_purpose" value="research"> For research</label>
-                        <label><input type="checkbox" name="organ_donation_purpose" value="education"> For education</label>
-                        <div class="form-group" style="margin-top: 10px;">
-                            <label for="organ_donation_purpose_details">Additional specifications for organ donation purpose (e.g., for education about a specific condition):</label>
-                            <textarea id="organ_donation_purpose_details" name="organ_donation_purpose_details" rows="2" placeholder="Add any specific wishes here..."></textarea>
+                    <div id="organDonationTypes" class="form-group">
+                        <p style="font-weight: 600; margin-bottom: 10px;">Organs to donate</p>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" name="organ_types" value="all"> All</label>
+                            <label><input type="checkbox" name="organ_types" value="heart"> Heart</label>
+                            <label><input type="checkbox" name="organ_types" value="lungs"> Lungs</label>
+                            <label><input type="checkbox" name="organ_types" value="liver"> Liver</label>
+                            <label><input type="checkbox" name="organ_types" value="kidneys"> Kidneys</label>
+                            <label><input type="checkbox" name="organ_types" value="pancreas"> Pancreas</label>
                         </div>
+                    </div>
+
+                    <div id="tissueDonationTypes" class="form-group" style="margin-top: 20px;">
+                        <p style="font-weight: 600; margin-bottom: 10px;">Tissues to donate</p>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" name="tissue_donation_types" value="all"> All</label>
+                            <label><input type="checkbox" name="tissue_donation_types" value="skin"> Skin</label>
+                            <label><input type="checkbox" name="tissue_donation_types" value="bone"> Bone</label>
+                            <label><input type="checkbox" name="tissue_donation_types" value="corneas"> Corneas</label>
+                            <label><input type="checkbox" name="tissue_donation_types" value="heart_valves"> Heart Valves</label>
+                        </div>
+                    </div>
+
+                    <div id="donationPurpose" class="form-group" style="margin-top: 20px;">
+                        <p style="font-weight: 600; margin-bottom: 10px;">Purpose</p>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" name="donation_purpose" value="all"> All</label>
+                            <label><input type="checkbox" name="donation_purpose" value="transplant"> For transplant</label>
+                            <label><input type="checkbox" name="donation_purpose" value="therapy"> For therapy</label>
+                            <label><input type="checkbox" name="donation_purpose" value="research"> For research</label>
+                            <label><input type="checkbox" name="donation_purpose" value="education"> For education</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 20px;">
+                        <label for="donation_specifications" style="display: block; margin-bottom: 8px;">Additional instructions:</label>
+                        <textarea id="donation_specifications" name="donation_specifications" rows="3" style="width: 100%;" placeholder="Add any specific wishes here..."></textarea>
                     </div>
 
                     <hr class="divider">
 
-                    <div class="checkbox-group">
-                        <label>
-                            <input type="checkbox" name="want_tissue_donation" value="yes">
-                            I wish to donate tissue (e.g., skin, bone, corneas)
-                        </label>
-                    </div>
 
-                    <div id="tissueDonationTypes" class="conditional-group" style="display:none;">
-                        <p>Which tissues would you like to donate?</p>
-                        <label><input type="checkbox" name="tissue_donation_types" value="all"> All tissues</label>
-                        <label><input type="checkbox" name="tissue_donation_types" value="skin"> Skin</label>
-                        <label><input type="checkbox" name="tissue_donation_types" value="bone"> Bone</label>
-                        <label><input type="checkbox" name="tissue_donation_types" value="corneas"> Corneas</label>
-                        <label><input type="checkbox" name="tissue_donation_types" value="heart_valves"> Heart Valves</label>
-                    </div>
                 </div>
 
                 <!-- TAB 5: NOTARIZATION & WITNESSES -->

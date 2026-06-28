@@ -23,7 +23,7 @@ sample_questionnaire = {
     'want_organ_donation': 'yes',
     'organ_donation_types': ['heart', 'lungs'],
     'organ_donation_purpose': ['transplant', 'research'],
-    'organ_donation_purpose_details': 'For research purposes only',
+    'donation_specifications': 'For research purposes only',
     'want_tissue_donation': 'yes',
     'tissue_donation_types': ['skin', 'bone'],
 }
