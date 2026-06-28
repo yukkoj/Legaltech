@@ -216,7 +216,7 @@ I wish to be fully informed of my medical condition, diagnosis, prognosis, and t
 PART VIII: ORGAN AND TISSUE DONATION
 
 {% if want_organ_donation == 'yes' %}
-I wish to donate my organs. The specific organs I wish to donate are: {{ organ_donation_types | join_list }}.
+I wish to donate my organs. The specific organs I wish to donate are: {{ organ_donation_types | join_list | capitalize_words }}.
 {% if organ_donation_purpose %}
 My organs may be used for the following purposes: {{ organ_donation_purpose | join_list | capitalize_words }}.
 {% endif %}
@@ -225,7 +225,7 @@ I do not wish to donate organs.
 {% endif %}
 
 {% if want_tissue_donation == 'yes' %}
-I wish to donate tissue. {% if tissue_donation_types %}The specific tissues are: {{ tissue_donation_types | join_list }}.{% else %}This includes skin, bone, and corneas as needed.{% endif %}
+I wish to donate tissue. {% if tissue_donation_types %}The specific tissues are: {{ tissue_donation_types | join_list | capitalize_words }}.{% else %}This includes skin, bone, and corneas as needed.{% endif %}
 {% if tissue_donation_purpose %}
 My tissues may be used for the following purposes: {{ tissue_donation_purpose | join_list | capitalize_words }}.
 {% endif %}
