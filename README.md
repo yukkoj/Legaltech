@@ -17,7 +17,7 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for detailed architecture documentation.
 ✅ **Real-Time Validation** - Input validation before document generation
 ✅ **Template-Based Generation** - Documents created from Jinja2 templates
 ✅ **JSON Data Storage** - Questionnaires saved as JSON for easy editing and regeneration
-✅ **Download Documents** - Export generated documents as text files
+✅ **Download Documents** - Export generated documents as text and PDF files
 ✅ **Comprehensive Questionnaire** - Covers personal info, healthcare preferences, values, witnesses
 
 ## Quick Start
@@ -51,10 +51,12 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for detailed architecture documentation.
    - Values & Beliefs
    - Witnesses
    - Review & Generate
+  
+5. **Click "Validate Input"** for LLM validation
 
-5. **Click "Generate Document"** to create your Advance Directive
+6. **Click "Generate Document"** to create your Advance Directive
 
-6. **Download or copy** the generated document
+7. **Download or copy** the generated document
 
 See [RUNNING_UI.md](RUNNING_UI.md) for detailed setup and troubleshooting.
 
