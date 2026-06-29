@@ -360,27 +360,6 @@ READY TO DRAFT: YES/NO
 
 ---
 
-## State-Specific Considerations
-
-Each state has different requirements. Enhance validation:
-
-```python
-STATE_REQUIREMENTS = {
-    'california': {
-        'min_witnesses': 2,
-        'witness_restrictions': ['no_beneficiary', 'no_healthcare_provider'],
-        'notary_optional': True,
-    },
-    'new_york': {
-        'min_witnesses': 2,
-        'witness_restrictions': ['no_relative', 'no_healthcare_provider'],
-        'notary_required': True,
-    }
-}
-```
-
----
-
 ## Future Enhancements
 
 1. **Template Versioning**
